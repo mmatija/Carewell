@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/message_recipient"
+        android:text="@string/recipient"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:padding="5dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_below="@+id/message_recipient">
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/message_text"
+            android:hint="@string/compose_message"
+            android:textColor="@android:color/secondary_text_light"
+            android:layout_weight="1"
+            android:background="@drawable/edit_text_style"
+            android:ellipsize="start"
+            android:gravity="top|start"
+            />
+
+        <Button
+            android:id="@+id/send_message_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="@string/action_send"
+            android:background="@android:color/holo_green_dark"/>
+        </LinearLayout>
+
+</RelativeLayout>
