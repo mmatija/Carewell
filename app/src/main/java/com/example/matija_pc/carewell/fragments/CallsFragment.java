@@ -1,19 +1,17 @@
 package com.example.matija_pc.carewell.fragments;
 
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.ContextMenu;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.matija_pc.carewell.R;
@@ -85,7 +83,7 @@ public class CallsFragment extends Fragment {
         }
     }
 
-    public void onCreateContextMenu (ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+    /*public void onCreateContextMenu (ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, view, menuInfo);
         menu.add(0, view.getId(), 0, "Delete");
     }
@@ -110,7 +108,7 @@ public class CallsFragment extends Fragment {
         }
 
         return super.onContextItemSelected(menuItem);
-    }
+    }*/
 
     private void deleteCallLog(String _id) {
         //delete log from database

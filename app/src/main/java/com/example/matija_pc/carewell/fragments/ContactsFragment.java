@@ -1,15 +1,13 @@
 package com.example.matija_pc.carewell.fragments;
 
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
 import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -20,13 +18,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.matija_pc.carewell.adapters.ContactsHolderClass;
+import com.example.matija_pc.carewell.R;
+import com.example.matija_pc.carewell.adapters.ContactsAdapter;
 import com.example.matija_pc.carewell.database.DatabaseHelper;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
-import com.example.matija_pc.carewell.R;
-import com.example.matija_pc.carewell.UserProfileActivity;
-import com.example.matija_pc.carewell.adapters.ContactsAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,7 +131,7 @@ public class ContactsFragment extends Fragment {
         }
     }
 
-     View.OnClickListener displayUserProfile = new View.OnClickListener() {
+     /*View.OnClickListener displayUserProfile = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
@@ -149,7 +145,7 @@ public class ContactsFragment extends Fragment {
             intent.putExtra(IMAGE_PATH, contactsHolder.imagePath);
             startActivityForResult(intent, 1);
         }
-    };
+    };*/
 
 
     public void deleteContact (String userID) {

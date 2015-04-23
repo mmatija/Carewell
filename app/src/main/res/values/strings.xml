@@ -23,4 +23,6 @@
     <string name="action_send">Send</string>
     <string name="recipient">Recipient: </string>
     <string name="title_activity_compose_message">ComposeMessageActivity</string>
+    <string name="title_activity_searchable">SearchableActivity</string>
+    <string name="title_activity_messages">MessagesActivity</string>
 </resources>

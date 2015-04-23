@@ -8,4 +8,9 @@
         android:showAsAction="always"
         tools:ignore="AppCompatResource" />
 
+    <item android:id="@id/action_delete_all"
+        android:title="@string/action_delete_all"
+        android:showAsAction="never"
+        tools:ignore="AppCompatResource" />
+
 </menu>

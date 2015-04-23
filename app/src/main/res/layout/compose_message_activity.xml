@@ -37,7 +37,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:text="@string/action_send"
-            android:background="@android:color/holo_green_dark"/>
+            android:background="@drawable/custom_send_button"
+            android:clickable="true"/>
         </LinearLayout>
 
 </RelativeLayout>

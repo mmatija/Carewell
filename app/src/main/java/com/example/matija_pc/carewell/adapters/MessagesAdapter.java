@@ -50,9 +50,9 @@ public class MessagesAdapter extends BaseAdapter {
         View view;
         //if this is a received message, use received message layout, else use sent message layout
         if (mMessages.get(position).get(DatabaseTables.Messages.MESSAGE_DIRECTION).equals("received"))
-            view = LayoutInflater.from(mContext).inflate(R.layout.received_message_layout, parent);
+            view = LayoutInflater.from(mContext).inflate(R.layout.received_message_layout, null);
         else
-            view = LayoutInflater.from(mContext).inflate(R.layout.sent_message_layout, parent);
+            view = LayoutInflater.from(mContext).inflate(R.layout.sent_message_layout, null);
 
         TextView messageText = (TextView) view.findViewById(R.id.message_text);
         TextView messageDate = (TextView) view.findViewById(R.id.message_date);

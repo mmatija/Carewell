@@ -16,7 +16,6 @@ import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -29,8 +28,8 @@ public class ConversationsAdapter extends BaseAdapter {
     Activity mActivity;
     Context mContext;
 
-    public ConversationsAdapter (Activity activity, ArrayList<HashMap<String, String>> converations) {
-        mConversations = converations;
+    public ConversationsAdapter (Activity activity, ArrayList<HashMap<String, String>> conversations) {
+        mConversations = conversations;
         mActivity = activity;
         mContext = activity.getApplicationContext();
         distinctUserImages = new ArrayList<UserImageLoader>();
@@ -71,7 +70,7 @@ public class ConversationsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         if (view == null)
-            view = LayoutInflater.from(mContext).inflate(R.layout.message_conversation, parent);
+            view = LayoutInflater.from(mContext).inflate(R.layout.message_conversation, null);
 
         ImageView userImage = (ImageView) view.findViewById(R.id.user_picture_thumbnail);
         TextView userInfo = (TextView) view.findViewById(R.id.user_info);
@@ -101,7 +100,7 @@ public class ConversationsAdapter extends BaseAdapter {
                                     DatabaseTables.Messages.USER_ID + "=?" + " ORDER BY " + DatabaseTables.Messages.TIMESTAMP +
                                     " DESC LIMIT 1";
 
-        result = databaseOperations.select(queryLastMessage, null);
+        result = databaseOperations.select(queryLastMessage, mConversations.get(position).get(DatabaseTables.Conversations.USER_ID));
         result.moveToFirst();
         String messageText = result.getString(result.getColumnIndex(DatabaseTables.Messages.MESSAGE_TEXT));
         lastMessage.setText(messageText);
@@ -111,7 +110,7 @@ public class ConversationsAdapter extends BaseAdapter {
         //set user image
         userImage.setBackgroundColor(Color.parseColor("#ff9e9e9e"));
         for (int i=0; i<distinctUserImages.size(); i++) {
-            if (mConversations.get(i).get(DatabaseTables.Conversations.USER_ID).equals(distinctUserImages.get(i).userID)) {
+            if (mConversations.get(position).get(DatabaseTables.Conversations.USER_ID).equals(distinctUserImages.get(i).userID)) {
                 if (distinctUserImages.get(i).bitmap!=null) {
                     userImage.setImageBitmap(distinctUserImages.get(i).bitmap);
                     userImage.setBackgroundColor(0x0);
@@ -119,6 +118,7 @@ public class ConversationsAdapter extends BaseAdapter {
                 else {
                     userImage.setImageResource(R.drawable.generic_picture);
                 }
+                break;
             }
         }
 

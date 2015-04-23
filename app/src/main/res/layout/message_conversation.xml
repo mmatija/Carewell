@@ -20,7 +20,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:id="@id/user_info"
-                android:layout_toRightOf="@id/user_picture_thumbnail"/>
+                android:layout_toRightOf="@id/user_picture_thumbnail"
+                android:textColor="@android:color/black"/>
 
 
                 <TextView
@@ -30,6 +31,7 @@
                     android:layout_toRightOf="@id/user_picture_thumbnail"
                     android:layout_alignBottom="@id/user_picture_thumbnail"
                     android:layout_below="@id/user_info"
+                    android:textColor="@android:color/black"
                 />
 
     </RelativeLayout>

@@ -2,18 +2,15 @@ package com.example.matija_pc.carewell;
 
 import android.app.Activity;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SearchView;
 
-import com.example.matija_pc.carewell.adapters.ContactsAdapter;
 import com.example.matija_pc.carewell.adapters.SearchResultAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
@@ -27,6 +24,7 @@ import java.util.HashMap;
 public class SearchableActivity extends Activity {
     ArrayList<HashMap<String, String>> contacts;
     SearchResultAdapter adapter;
+    Intent returnIntent;
 
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,21 +33,22 @@ public class SearchableActivity extends Activity {
         adapter = new SearchResultAdapter(this, contacts);
         ListView listView = (ListView) findViewById(R.id.search_result_list);
         listView.setAdapter(adapter);
+        returnIntent = new Intent();
 
 
         //get intent
         Intent intent = getIntent();
-        if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            //do search
-            new GetSearchResult().execute(query);
-        }
+        String query = intent.getStringExtra(SearchManager.QUERY);
+        //do search
+        new GetSearchResult().execute(query);
+        listView.setOnItemClickListener(onItemClickListener);
     }
 
     private class GetSearchResult extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {
+            contacts.clear();
             String query = "SELECT * FROM " + DatabaseTables.Contacts.TABLE_NAME +
                             " WHERE " + DatabaseTables.Contacts.FIRST_NAME + " LIKE " + "'%" +
                             params[0] + "%'" + " OR " + DatabaseTables.Contacts.LAST_NAME + " LIKE " + "'%" +
@@ -78,5 +77,21 @@ public class SearchableActivity extends Activity {
     }
 
 
+    AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            String userID = contacts.get(position).get(DatabaseTables.Contacts.USER_ID);
+            String firstName = contacts.get(position).get(DatabaseTables.Contacts.FIRST_NAME);
+            String lastName = contacts.get(position).get(DatabaseTables.Contacts.LAST_NAME);
+            Log.d("SearchableActivity", userID);
+            Log.d("SearchableActivity", firstName);
+            Log.d("SearchableActivity", lastName);
+            returnIntent.putExtra(MainActivity.USER_ID, userID);
+            returnIntent.putExtra(MainActivity.FIRST_NAME, firstName);
+            returnIntent.putExtra(MainActivity.LAST_NAME, lastName);
+            setResult(ComposeMessageActivity.SEARCH_RESULT, returnIntent);
+            finish();
+        }
+    };
 
 }

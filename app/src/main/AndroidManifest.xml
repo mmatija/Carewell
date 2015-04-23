@@ -27,20 +27,27 @@
                 android:value="com.example.matija_pc.carewell.MainActivity" />
         </activity>
 
-        <activity android:name=".SearchableActivity">
-            <intent-filter >
-                <action android:name="android.intent.action.SEARCH"/>
-            </intent-filter>
-            <meta-data android:name="android.app.searchable"
-                        android:resource="@xml/searchable"/>
+        <activity android:name=".SearchableActivity"
+            android:label="@string/title_activity_searchable">
         </activity>
 
         <activity android:name=".ComposeMessageActivity"
             android:label="@string/title_activity_compose_message"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+
             <meta-data android:name="android.app.default_searchable"
-                android:value=".SearchableActivity"/>
+                android:value=".ComposeMessageActivity"/>
         </activity>
+
+        <activity android:name=".MessagesActivity"
+            android:label="@string/title_activity_messages"/>
 
     </application>
 

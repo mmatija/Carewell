@@ -1,21 +1,26 @@
 package com.example.matija_pc.carewell.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.matija_pc.carewell.ComposeMessageActivity;
+import com.example.matija_pc.carewell.MainActivity;
+import com.example.matija_pc.carewell.MessagesActivity;
 import com.example.matija_pc.carewell.R;
-import com.example.matija_pc.carewell.SearchableActivity;
 import com.example.matija_pc.carewell.adapters.ConversationsAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
@@ -49,7 +54,37 @@ public class ConversationsFragment extends Fragment {
         adapter = new ConversationsAdapter(getActivity(), conversations);
         listView.setAdapter(adapter);
         listView.setItemsCanFocus(true);
+        listView.setOnItemClickListener(onItemClickListener);
+        registerForContextMenu(listView);
         new GetConversationsFromDatabase().execute();
+    }
+
+    public void onCreateContextMenu (ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, view, menuInfo);
+        menu.add(0, view.getId(), 0, "Delete");
+    }
+
+    public boolean onContextItemSelected(MenuItem menuItem) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
+        final String userID = conversations.get(menuInfo.position).get(DatabaseTables.Conversations.USER_ID);
+
+        if (menuItem.getTitle().toString().equals("Delete")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Delete conversation?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    deleteConversations(DatabaseTables.Conversations.USER_ID, userID);
+                }
+            });
+            builder.setNegativeButton("No", null);
+            builder.show();
+
+            return true;
+        }
+
+        return super.onContextItemSelected(menuItem);
     }
 
     private class GetConversationsFromDatabase extends AsyncTask<Void, Void, Void> {
@@ -86,10 +121,50 @@ public class ConversationsFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), ComposeMessageActivity.class);
                 startActivity(intent);
                 return true;
+
+            case R.id.action_delete_all:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Delete all conversations?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteConversations(null, null);
+
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+                return true;
         }
 
         return super.onOptionsItemSelected(menuItem);
     }
 
+    public void deleteConversations(String where, String value) {
+        DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
+        databaseOperations.delete(DatabaseTables.Conversations.TABLE_NAME, where, value);
+        databaseOperations.delete(DatabaseTables.Messages.TABLE_NAME, where, where);
+        if (where == null && value == null) {
+            conversations.clear();
+        }
+        else {
+            for(int i=0; i<conversations.size(); i++) {
+                if (conversations.get(i).get(DatabaseTables.Conversations.USER_ID).equals(value)) {
+                    conversations.remove(i);
+                    break;
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Intent intent = new Intent(getActivity(), MessagesActivity.class);
+            intent.putExtra(MainActivity.USER_ID, conversations.get(position).get(DatabaseTables.Conversations.USER_ID));
+            startActivity(intent);
+        }
+    };
 
 }
