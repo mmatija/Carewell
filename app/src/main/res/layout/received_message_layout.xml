@@ -26,7 +26,8 @@
                 android:text="Hello"
                 android:gravity="center_vertical"
                 android:textSize="20dp"
-                android:id="@+id/message_text"/>
+                android:id="@+id/message_text"
+                android:textColor="@android:color/black"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -36,6 +37,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
+                android:textColor="@android:color/black"
                />
         </LinearLayout>
     </LinearLayout>

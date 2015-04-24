@@ -33,7 +33,7 @@ public class CallsAdapter extends BaseAdapter {
     ArrayList<HashMap<String, String>> mCalls;
     Context mContext;
     Activity mActivity;
-    ArrayList<UserImageLoader> distinctContacts = new ArrayList<UserImageLoader>();
+    public static ArrayList<UserImageLoader> distinctContacts = new ArrayList<UserImageLoader>();
     String selectDistinct = "SELECT DISTINCT " + DatabaseTables.CallsLog.PERSON_CALLED +
             " FROM " + DatabaseTables.CallsLog.TABLE_NAME;
 
@@ -55,8 +55,6 @@ public class CallsAdapter extends BaseAdapter {
         result.close();
         //new GetUserImages().execute();
     }
-
-
 
     @Override
     public int getCount() {
@@ -89,12 +87,13 @@ public class CallsAdapter extends BaseAdapter {
         callsHolder.callDirection = mCalls.get(position).get(DatabaseTables.CallsLog.CALL_DIRECTION);
         callsHolder.callType = mCalls.get(position).get(DatabaseTables.CallsLog.CALL_TYPE);
 
-        String rawQuery =   "SELECT * FROM " + DatabaseTables.CallsLog.TABLE_NAME + " JOIN " +
+        /*String rawQuery =   "SELECT * FROM " + DatabaseTables.CallsLog.TABLE_NAME + " JOIN " +
                                     DatabaseTables.Contacts.TABLE_NAME + " ON " + DatabaseTables.Contacts.USER_ID +
                                     "=" + DatabaseTables.CallsLog.PERSON_CALLED + " WHERE " + DatabaseTables.CallsLog.PERSON_CALLED +
-                                    "=?";
+                                    "=?";*/
 
-
+        String rawQuery = "SELECT * FROM " + DatabaseTables.Contacts.TABLE_NAME + " WHERE " +
+                            DatabaseTables.Contacts.USER_ID + "=?";
         TextView personCalled = (TextView) v.findViewById(R.id.user_info);
         TextView callDuration = (TextView) v.findViewById(R.id.call_duration);
         ImageView callDirection = (ImageView) v.findViewById(R.id.call_direction);
@@ -111,6 +110,13 @@ public class CallsAdapter extends BaseAdapter {
         //if there are no rows, i.e. user is deleted
         if(!result.moveToFirst()) {
             personCalled.setText("Unknown");
+            userPicture.setImageResource(R.drawable.generic_picture);
+            //distinctContacts.clear();
+            for (int i=0; i<distinctContacts.size(); i++)
+                if (distinctContacts.get(i).userID.equals(callsHolder.personCalled)) {
+                    distinctContacts.remove(i);
+                    break;
+                }
             videoCall.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -171,10 +177,13 @@ public class CallsAdapter extends BaseAdapter {
 
         //userPicture.setImageResource(R.drawable.generic_picture);
         //set user image
+
         userPicture.setBackgroundColor(Color.parseColor("#ff9e9e9e"));
+        boolean userImageExists = false;
         for (int i=0; i<distinctContacts.size(); i++) {
             //if image is already loaded
             if (distinctContacts.get(i).userID.equals(callsHolder.personCalled)) {
+                userImageExists = true;
                 if (distinctContacts.get(i).bitmap!=null) {
                     userPicture.setImageBitmap(distinctContacts.get(i).bitmap);
                     userPicture.setBackgroundColor(0x0);
@@ -183,6 +192,18 @@ public class CallsAdapter extends BaseAdapter {
                     userPicture.setImageResource(R.drawable.generic_picture);
                 }
                 break;
+            }
+        }
+
+        if (!userImageExists) {
+            UserImageLoader imageLoader = new UserImageLoader(callsHolder.personCalled, mContext);
+            distinctContacts.add(imageLoader);
+            if (imageLoader.bitmap!=null) {
+                userPicture.setImageBitmap(imageLoader.bitmap);
+                userPicture.setBackgroundColor(0x0);
+            }
+            else {
+                userPicture.setImageResource(R.drawable.generic_picture);
             }
         }
 

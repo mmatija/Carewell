@@ -2,11 +2,14 @@ package com.example.matija_pc.carewell.listeners;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.view.View;
 
 import com.example.matija_pc.carewell.MainActivity;
 import com.example.matija_pc.carewell.UserProfileActivity;
 import com.example.matija_pc.carewell.adapters.ContactsHolderClass;
+import com.example.matija_pc.carewell.database.DatabaseOperations;
+import com.example.matija_pc.carewell.database.DatabaseTables;
 
 /**
  * Created by Matija-PC on 13.4.2015..
@@ -23,6 +26,12 @@ public class DisplayUserProfileListener implements View.OnClickListener {
         Intent intent = new Intent(activity, UserProfileActivity.class);
         ContactsHolderClass.ContactsHolder contactsHolder = new ContactsHolderClass.ContactsHolder();
         contactsHolder = (ContactsHolderClass.ContactsHolder) v.getTag();
+        DatabaseOperations databaseOperations = new DatabaseOperations(activity.getApplicationContext());
+        String query = "SELECT * FROM " + DatabaseTables.Contacts.TABLE_NAME + " WHERE " +
+                        DatabaseTables.Contacts.USER_ID + "=?";
+        Cursor result = databaseOperations.select(query, contactsHolder.userID);
+        if (result.getCount()<=0)
+            return;
         //TextView textView = (TextView) v.getTag();
         intent.putExtra(MainActivity.FIRST_NAME, contactsHolder.firstName);
         intent.putExtra(MainActivity.LAST_NAME, contactsHolder.lastName);

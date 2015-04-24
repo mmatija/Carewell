@@ -47,7 +47,8 @@
         </activity>
 
         <activity android:name=".MessagesActivity"
-            android:label="@string/title_activity_messages"/>
+            android:label="@string/title_activity_messages"
+            android:windowSoftInputMode="adjustResize"/>
 
     </application>
 

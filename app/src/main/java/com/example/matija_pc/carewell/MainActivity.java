@@ -28,6 +28,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public static final String IMAGE_PATH = "com.example.matija_pc.carewell.IMAGE_PATH";
     public static final int DELETE = 10;
     public static final int UPDATE = 11;
+    public static final int IMAGE_CHANGED = 12;
 
     private ViewPager pager;
     private TabsPagerAdapter mAdapter;
@@ -131,7 +132,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             String newFirstName = data.getStringExtra(FIRST_NAME);
             String newLastName = data.getStringExtra(LAST_NAME);
             updateContactInfo(newFirstName, newLastName, updatedUserID);
-
         }
 
     }
@@ -148,6 +148,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
 
         ContactsFragment.adapter.notifyDataSetChanged();
+        //CallsAdapter.distinctContacts.clear();
+        CallsFragment.callsAdapter.notifyDataSetChanged();
         Toast.makeText(getApplicationContext(), "Contact deleted", Toast.LENGTH_SHORT).show();
     }
 
@@ -170,6 +172,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             }
         }
         ContactsFragment.adapter.notifyDataSetChanged();
+        CallsFragment.callsAdapter.notifyDataSetChanged();
         Toast.makeText(getApplicationContext(), "Contact updated", Toast.LENGTH_SHORT).show();
     }
 

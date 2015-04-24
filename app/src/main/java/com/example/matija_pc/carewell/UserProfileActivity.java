@@ -8,8 +8,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,8 +21,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.matija_pc.carewell.adapters.CallsAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
+import com.example.matija_pc.carewell.fragments.CallsFragment;
 import com.example.matija_pc.carewell.listeners.AudioCallButtonListener;
 import com.example.matija_pc.carewell.listeners.SendMessageButtonListener;
 import com.example.matija_pc.carewell.listeners.VideoCallButtonListener;
@@ -96,10 +98,14 @@ public class UserProfileActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(DatabaseTables.Contacts.IMAGE_PATH, "");
+                        String userID = intent.getStringExtra(MainActivity.USER_ID);
                         DatabaseOperations databaseOperations = new DatabaseOperations(getApplicationContext());
-                        databaseOperations.update(DatabaseTables.Contacts.TABLE_NAME, contentValues, DatabaseTables.Contacts.USER_ID, intent.getStringExtra(MainActivity.USER_ID));
+                        databaseOperations.update(DatabaseTables.Contacts.TABLE_NAME, contentValues, DatabaseTables.Contacts.USER_ID, userID);
                         ImageView imageView = (ImageView) v.findViewById(R.id.user_picture);
                         imageView.setImageResource(R.drawable.generic_picture);
+                        //clear distinct pictures list
+                        CallsAdapter.distinctContacts.clear();
+                        CallsFragment.callsAdapter.notifyDataSetChanged();
 
                     }
                 })
@@ -131,6 +137,10 @@ public class UserProfileActivity extends Activity {
                 ImageView userImage = (ImageView) findViewById(R.id.user_picture);
                 Bitmap bitmap = BitmapScaler.decodeSampledBitmap(selectedImagePath, 0, 0);
                 userImage.setImageBitmap(bitmap);
+
+                //clear distinct pictures list
+                CallsAdapter.distinctContacts.clear();
+                CallsFragment.callsAdapter.notifyDataSetChanged();
             }
         }
     }

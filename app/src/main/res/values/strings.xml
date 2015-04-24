@@ -25,4 +25,7 @@
     <string name="title_activity_compose_message">ComposeMessageActivity</string>
     <string name="title_activity_searchable">SearchableActivity</string>
     <string name="title_activity_messages">MessagesActivity</string>
+    <string name="all_contacts">All contacts</string>
+    <string name="sent">sent</string>
+    <string name="received">received</string>
 </resources>

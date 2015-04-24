@@ -15,7 +15,9 @@ import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -75,6 +77,7 @@ public class ConversationsAdapter extends BaseAdapter {
         ImageView userImage = (ImageView) view.findViewById(R.id.user_picture_thumbnail);
         TextView userInfo = (TextView) view.findViewById(R.id.user_info);
         TextView lastMessage = (TextView) view.findViewById(R.id.last_message_text);
+        TextView messageDate = (TextView) view.findViewById(R.id.message_date);
 
         String queryUserData = "SELECT " + DatabaseTables.Contacts.FIRST_NAME + " , " + DatabaseTables.Contacts.LAST_NAME +
                        " FROM " + DatabaseTables.Contacts.TABLE_NAME + " WHERE " +
@@ -104,6 +107,11 @@ public class ConversationsAdapter extends BaseAdapter {
         result.moveToFirst();
         String messageText = result.getString(result.getColumnIndex(DatabaseTables.Messages.MESSAGE_TEXT));
         lastMessage.setText(messageText);
+
+        long timestamp = result.getLong(result.getColumnIndex(DatabaseTables.Messages.TIMESTAMP));
+        Date date = new Date(timestamp);
+        SimpleDateFormat dateFormat = new SimpleDateFormat();
+        messageDate.setText(dateFormat.format(date));
 
         result.close();
 

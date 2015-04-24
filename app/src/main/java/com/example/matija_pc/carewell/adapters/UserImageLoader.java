@@ -12,7 +12,7 @@ import com.example.matija_pc.carewell.database.DatabaseTables;
  * Created by Matija-PC on 16.4.2015..
  */
 public class UserImageLoader {
-    String userID;
+    public String userID;
     String imagePath;
     Bitmap bitmap;
     Context mContext;

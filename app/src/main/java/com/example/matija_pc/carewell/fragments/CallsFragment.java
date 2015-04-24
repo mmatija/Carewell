@@ -108,7 +108,7 @@ public class CallsFragment extends Fragment {
         }
 
         return super.onContextItemSelected(menuItem);
-    }*/
+    }
 
     private void deleteCallLog(String _id) {
         //delete log from database
@@ -122,7 +122,7 @@ public class CallsFragment extends Fragment {
                 break;
             }
         }
-    }
+    }*/
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater);

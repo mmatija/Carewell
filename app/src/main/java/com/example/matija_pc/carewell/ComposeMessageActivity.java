@@ -50,7 +50,6 @@ public class ComposeMessageActivity extends Activity {
 
     public void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            Toast.makeText(getApplicationContext(), "Search requested", Toast.LENGTH_SHORT).show();
             String query = intent.getStringExtra(SearchManager.QUERY);
             Intent searchIntent = new Intent(this, SearchableActivity.class);
             searchIntent.putExtra(SearchManager.QUERY, query);
@@ -67,9 +66,23 @@ public class ComposeMessageActivity extends Activity {
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false);
+        //searchView.setIconifiedByDefault(false);
         getActionBar().setTitle("Compose");
         return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        //list all contacts - if a query is empty, sql will match all users
+        if (id==R.id.list_all_contacts) {
+            String query = "";
+            Intent searchIntent = new Intent(this, SearchableActivity.class);
+            searchIntent.putExtra(SearchManager.QUERY, query);
+            startActivityForResult(searchIntent, ACTIVITY_REQUEST_CODE);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(menuItem);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -125,8 +138,8 @@ public class ComposeMessageActivity extends Activity {
                         HashMap<String, String> conversation = new HashMap<>();
                         conversation.put(DatabaseTables.Conversations.USER_ID, userID);
                         ConversationsFragment.conversations.add(conversation);
-                        ConversationsFragment.adapter.notifyDataSetChanged();
                     }
+                    ConversationsFragment.adapter.notifyDataSetChanged();
                     //start new activity in which all messages exchanged with this user are shown
                     Intent intent = new Intent(getApplicationContext(), MessagesActivity.class);
                     intent.putExtra(MainActivity.USER_ID, userID);

@@ -1,13 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/parent">
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/messages_list"
         android:dividerHeight="0dp"
-        android:divider="@android:color/darker_gray"/>
+        android:divider="@android:color/darker_gray"
+        android:layout_weight="1"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="3">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@id/message_text"
+            android:hint="@string/compose_message"
+            android:textColor="@android:color/secondary_text_light"
+            android:background="@drawable/edit_text_style"
+            android:ellipsize="start"
+            android:gravity="top|start"
+            android:layout_toLeftOf="@id/send_message_button"
+            android:layout_alignParentLeft="true"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_send"
+            android:background="@drawable/custom_send_button"
+            android:layout_gravity="bottom"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@id/message_text"
+            android:id="@id/send_message_button"
+        />
+    </RelativeLayout>
 
 </LinearLayout>

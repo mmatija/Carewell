@@ -8,4 +8,10 @@
         android:showAsAction="always"
         android:actionViewClass="android.widget.SearchView"
         tools:ignore="AppCompatResource" />
+
+    <item android:id="@+id/list_all_contacts"
+        android:icon="@drawable/generic_picture"
+        android:title="@string/all_contacts"
+        android:showAsAction="always"
+        tools:ignore="AppCompatResource" />
 </menu>
