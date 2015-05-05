@@ -33,6 +33,7 @@ import java.util.HashMap;
  */
 public class ConversationsFragment extends Fragment {
 
+    private static final int CONVERSATIONS_CONTEX_MENU_GROUP = 2;
     ListView listView;
     public static ArrayList<HashMap<String, String>> conversations;
     public static ConversationsAdapter adapter;
@@ -60,11 +61,12 @@ public class ConversationsFragment extends Fragment {
     }
 
     public void onCreateContextMenu (ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, view, menuInfo);
-        menu.add(0, view.getId(), 0, "Delete");
+        //super.onCreateContextMenu(menu, view, menuInfo);
+        menu.add(CONVERSATIONS_CONTEX_MENU_GROUP, view.getId(), 0, "Delete");
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
+        if (menuItem.getGroupId() != CONVERSATIONS_CONTEX_MENU_GROUP) return super.onContextItemSelected(menuItem);
         AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
         final String userID = conversations.get(menuInfo.position).get(DatabaseTables.Conversations.USER_ID);
 
@@ -143,7 +145,7 @@ public class ConversationsFragment extends Fragment {
     public void deleteConversations(String where, String value) {
         DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
         databaseOperations.delete(DatabaseTables.Conversations.TABLE_NAME, where, value);
-        databaseOperations.delete(DatabaseTables.Messages.TABLE_NAME, where, where);
+        databaseOperations.delete(DatabaseTables.Messages.TABLE_NAME, where, value);
         if (where == null && value == null) {
             conversations.clear();
         }

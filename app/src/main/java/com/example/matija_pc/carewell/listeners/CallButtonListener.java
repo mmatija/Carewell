@@ -1,9 +1,8 @@
 package com.example.matija_pc.carewell.listeners;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.provider.ContactsContract;
+import android.database.Cursor;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,12 +19,12 @@ import java.util.Random;
 /**
  * Created by Matija-PC on 13.4.2015..
  */
-public class VideoCallButtonListener implements View.OnClickListener {
-    Context mContext;
+public class CallButtonListener implements View.OnClickListener {
+    private static Context mContext;
     public CallsAdapter mAdapter;
     public ArrayList<HashMap<String, String>> mCalls;
 
-    public VideoCallButtonListener(Context context)
+    public CallButtonListener(Context context)
     {
         mContext = context;
     }
@@ -35,16 +34,18 @@ public class VideoCallButtonListener implements View.OnClickListener {
         //String[] possibleCallers = {"mm", "jm", "tm"};
         String[] possibleCallDirections = {"incoming", "outgoing", "missed"};
 
-        String personCalled = (String) v.getTag();
-        Toast.makeText(mContext, "Video call", Toast.LENGTH_SHORT).show();
+        CallHelper callHelper = (CallHelper) v.getTag();
+        String personCalled = callHelper.userID;
+        String callType = callHelper.callType;
+        Toast.makeText(mContext, callType, Toast.LENGTH_SHORT).show();
         ContentValues values = new ContentValues();
         Calendar calendar = Calendar.getInstance();
         long callStart = calendar.getTimeInMillis();
         Random r = new Random();
         long callFinish = callStart + r.nextInt(20001) + 1000;
         long callDuration = callFinish - callStart;
-        String callType = "video";
         String callDirection = possibleCallDirections[r.nextInt(3)];
+        if (callDirection.equals("missed")) callDuration = 0;
 
         values.put(DatabaseTables.CallsLog.PERSON_CALLED, personCalled);
         values.put(DatabaseTables.CallsLog.CALL_START, callStart);
@@ -61,7 +62,16 @@ public class VideoCallButtonListener implements View.OnClickListener {
     }
 
     public static void addCallToAdapter (ContentValues values) {
+        DatabaseOperations databaseOperations = new DatabaseOperations(mContext);
+        String query = "SELECT " + DatabaseTables.CallsLog._ID + " FROM " + DatabaseTables.CallsLog.TABLE_NAME +
+                        " WHERE " + DatabaseTables.CallsLog.CALL_DIRECTION + "=?" + " AND " +
+                        DatabaseTables.CallsLog.CALL_START + "=?" + " LIMIT 1";
+        Cursor result = databaseOperations.select(query, values.getAsString(DatabaseTables.CallsLog.CALL_DIRECTION), values.getAsString(DatabaseTables.CallsLog.CALL_START));
+        result.moveToFirst();
+        long _ID = result.getLong(0);
+        result.close();
         HashMap<String, String> call = new HashMap<String, String>();
+        call.put(DatabaseTables.CallsLog._ID, String.valueOf(_ID));
         call.put(DatabaseTables.CallsLog.PERSON_CALLED, values.getAsString(DatabaseTables.CallsLog.PERSON_CALLED));
         call.put(DatabaseTables.CallsLog.CALL_START, values.getAsString(DatabaseTables.CallsLog.CALL_START));
         call.put(DatabaseTables.CallsLog.CALL_FINISH, values.getAsString(DatabaseTables.CallsLog.CALL_FINISH));
@@ -70,5 +80,16 @@ public class VideoCallButtonListener implements View.OnClickListener {
         call.put(DatabaseTables.CallsLog.CALL_TYPE, values.getAsString(DatabaseTables.CallsLog.CALL_TYPE));
         CallsFragment.calls.add(call);
         CallsFragment.callsAdapter.notifyDataSetChanged();
+    }
+
+    //class which is used for adding tags to views so audio and video calls can be distinguished
+    public static class CallHelper {
+        public String userID;
+        public String callType;
+
+        public CallHelper() {
+            userID = "";
+            callType = "";
+        }
     }
 }

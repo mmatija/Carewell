@@ -28,18 +28,18 @@
     <TextView
         android:id="@+id/user_info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:textColor="@android:color/black"
-        android:typeface="sans"
         android:layout_toRightOf="@id/thumbnail"
         android:layout_toLeftOf="@+id/linear_layout_1"
         android:layout_alignTop="@id/thumbnail"
         android:layout_alignBottom="@id/thumbnail"
-        android:textStyle="bold"
         android:textSize="20sp"
         android:clickable="true"
         android:background="@drawable/custom_button"
-        android:layout_gravity="center"/>
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:text="aaaaaa"/>
 
     <LinearLayout
         android:id="@+id/linear_layout_1"

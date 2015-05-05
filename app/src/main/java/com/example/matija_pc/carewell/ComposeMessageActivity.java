@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 import com.example.matija_pc.carewell.fragments.ConversationsFragment;
+import com.example.matija_pc.carewell.listeners.SendMessageButtonListener;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -54,6 +55,21 @@ public class ComposeMessageActivity extends Activity {
             Intent searchIntent = new Intent(this, SearchableActivity.class);
             searchIntent.putExtra(SearchManager.QUERY, query);
             startActivityForResult(searchIntent, ACTIVITY_REQUEST_CODE);
+        }
+
+        //user is already defined, no need to search
+        if (SendMessageButtonListener.CONVERSATION_DOESNT_EXIST.equals(intent.getAction())) {
+            DatabaseOperations databaseOperations = new DatabaseOperations(getApplicationContext());
+            String query = "SELECT * FROM " + DatabaseTables.Contacts.TABLE_NAME + " WHERE " + DatabaseTables.Contacts.USER_ID + "=?";
+            userID = intent.getStringExtra(MainActivity.USER_ID);
+            Cursor result = databaseOperations.select(query, userID);
+            result.moveToFirst();
+            String firstName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME));
+            String lastName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.LAST_NAME));
+            TextView textView = (TextView) findViewById(R.id.message_recipient);
+            textView.setText(getResources().getString(R.string.recipient) + " " + firstName + " " + lastName);
+
+            result.close();
         }
     }
 

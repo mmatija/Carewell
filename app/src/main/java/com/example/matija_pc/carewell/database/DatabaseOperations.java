@@ -36,15 +36,12 @@ public class DatabaseOperations {
         writeDatabase.update(tableName, contentValues, where+"=?", new String[] {value});
     }
 
-    public Cursor select (String query, String where) {
-        if (where==null)
-            return readDatabase.rawQuery(query, null);
-        return readDatabase.rawQuery(query, new String[] {where});
+    public Cursor select (String query, String... where) {
+        /*if (where==null)
+            return readDatabase.rawQuery(query, null);*/
+        return readDatabase.rawQuery(query, where);
     }
 
-    /*public Cursor selectDistinct (String tableName, String[] columns, String selection, String[] selectionArgs, String groupBy) {
-        return readDatabase.query(true, tableName, columns, selection, selectionArgs, groupBy, null, null, null);
-    }*/
 
 
 }

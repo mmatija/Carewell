@@ -28,4 +28,5 @@
     <string name="all_contacts">All contacts</string>
     <string name="sent">sent</string>
     <string name="received">received</string>
+    <string name="add_new_contact">New Contact</string>
 </resources>

@@ -52,7 +52,8 @@ public class SearchableActivity extends Activity {
             String query = "SELECT * FROM " + DatabaseTables.Contacts.TABLE_NAME +
                             " WHERE " + DatabaseTables.Contacts.FIRST_NAME + " LIKE " + "'%" +
                             params[0] + "%'" + " OR " + DatabaseTables.Contacts.LAST_NAME + " LIKE " + "'%" +
-                            params[0] + "%'";
+                            params[0] + "%'" + " OR " + DatabaseTables.Contacts.FIRST_NAME + " || " + "' '" + " || " + DatabaseTables.Contacts.LAST_NAME +
+                            " LIKE " + "'%" + params[0] + "%'";
 
             DatabaseOperations databaseOperations = new DatabaseOperations(getApplicationContext());
             Cursor result = databaseOperations.select(query, null);

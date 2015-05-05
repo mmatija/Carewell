@@ -34,6 +34,7 @@ public class MessagesActivity extends Activity {
     ArrayList<HashMap<String, String>> messages;
     EditText editText;
     ListView listView;
+    boolean userExists = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,19 +50,29 @@ public class MessagesActivity extends Activity {
         //get user first and last name and display it on action bar
         DatabaseOperations databaseOperations = new DatabaseOperations(getApplicationContext());
         Cursor cursor = databaseOperations.select("SELECT * FROM " + DatabaseTables.Contacts.TABLE_NAME + " WHERE " + DatabaseTables.Contacts.USER_ID + "=?", userID);
-        cursor.moveToFirst();
-        String firstName = cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME));
-        String lastName = cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.LAST_NAME));
+        String firstName = "";
+        String lastName = "";
+        listView = (ListView) findViewById(R.id.messages_list);
+        editText = (EditText) findViewById(R.id.message_text);
+
+        if(cursor.moveToFirst()) {
+            firstName = cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME));
+            lastName = cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.LAST_NAME));
+            userExists = true;
+            Button button = (Button) findViewById(R.id.send_message_button);
+            button.setOnClickListener(sendMessageButtonListener);
+        }
+        else {
+            firstName = "Unknown";
+            editText.setFocusable(false);
+            editText.setHint("Cannot send message to this user");
+        }
         cursor.close();
 
         getActionBar().setTitle(firstName + " " + lastName);
 
         messages = new ArrayList<>();
-        listView = (ListView) findViewById(R.id.messages_list);
-        editText = (EditText) findViewById(R.id.message_text);
         //editText.setOnFocusChangeListener(onFocusChangeListener);
-        Button button = (Button) findViewById(R.id.send_message_button);
-        button.setOnClickListener(sendMessageButtonListener);
         adapter = new MessagesAdapter(this, messages);
         listView.setAdapter(adapter);
         //new GetMessagesFromDatabase().execute();
@@ -122,7 +133,8 @@ public class MessagesActivity extends Activity {
                 newMessage.put(DatabaseTables.Messages.MESSAGE_TEXT, messageText);
                 messages.add(newMessage);
                 adapter.notifyDataSetChanged();
-                ConversationsFragment.adapter.notifyDataSetChanged();
+                if (ConversationsFragment.adapter != null)
+                    ConversationsFragment.adapter.notifyDataSetChanged();
                 editText.setText("");
                 editText.clearFocus();
                 //scrollMyListViewToBottom();

@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,17 +34,19 @@ import java.util.HashMap;
  */
 public class ContactsFragment extends Fragment {
 
+    private static final int CONTACTS_CONTEXT_MENU_GROUP = 0;
     public static final String FIRST_NAME = "com.example.matija_pc.carewell.FIRST_NAME";
     public static final String USER_ID = "com.example.matija_pc.carewell.USER_ID";
     public static final String LAST_NAME = "com.example.matija_pc.carewell.LAST_NAME";
-    public static final String IMAGE_PATH = "com.example.matija_pc.carewell.IMAGE_PATH";
-    public static final int DELETE = 10;
-    public static final int UPDATE = 11;
     public static ArrayList<HashMap<String, String>> contacts;
     public static ContactsAdapter adapter;
     ListView listView;
 
-
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -57,8 +61,6 @@ public class ContactsFragment extends Fragment {
     }
 
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //Log.i("Contacts fragment", "onCreateView called");
-        //super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.contacts_fragment, container, false);
         listView = (ListView) view.findViewById(R.id.user_list);
         return view;
@@ -131,22 +133,6 @@ public class ContactsFragment extends Fragment {
         }
     }
 
-     /*View.OnClickListener displayUserProfile = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-            Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-            ContactsHolderClass.ContactsHolder contactsHolder = new ContactsHolderClass.ContactsHolder();
-            contactsHolder = (ContactsHolderClass.ContactsHolder) v.getTag();
-            //TextView textView = (TextView) v.getTag();
-            intent.putExtra(FIRST_NAME, contactsHolder.firstName);
-            intent.putExtra(LAST_NAME, contactsHolder.lastName);
-            intent.putExtra(USER_ID, contactsHolder.userID);
-            intent.putExtra(IMAGE_PATH, contactsHolder.imagePath);
-            startActivityForResult(intent, 1);
-        }
-    };*/
-
 
     public void deleteContact (String userID) {
         DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
@@ -187,12 +173,13 @@ public class ContactsFragment extends Fragment {
 
 
     public void onCreateContextMenu (ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, view, menuInfo);
-        menu.add(0, view.getId(), 0, "Edit");
-        menu.add(0, view.getId(), 0, "Delete");
+        //super.onCreateContextMenu(menu, view, menuInfo);
+        menu.add(CONTACTS_CONTEXT_MENU_GROUP, view.getId(), 0, "Edit");
+        menu.add(CONTACTS_CONTEXT_MENU_GROUP, view.getId(), 0, "Delete");
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
+        if (menuItem.getGroupId() != CONTACTS_CONTEXT_MENU_GROUP) return super.onContextItemSelected(menuItem);
         AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
         final String userID = contacts.get(adapterContextMenuInfo.position).get(DatabaseTables.Contacts.USER_ID);
 
@@ -244,5 +231,22 @@ public class ContactsFragment extends Fragment {
         }
 
         return super.onContextItemSelected(menuItem);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.contacts_fragment_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_new_contact:
+                //add code
+
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

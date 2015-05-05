@@ -22,12 +22,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.matija_pc.carewell.adapters.CallsAdapter;
+import com.example.matija_pc.carewell.adapters.ContactsAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 import com.example.matija_pc.carewell.fragments.CallsFragment;
-import com.example.matija_pc.carewell.listeners.AudioCallButtonListener;
+import com.example.matija_pc.carewell.fragments.ContactsFragment;
+import com.example.matija_pc.carewell.listeners.CallButtonListener;
 import com.example.matija_pc.carewell.listeners.SendMessageButtonListener;
-import com.example.matija_pc.carewell.listeners.VideoCallButtonListener;
 
 
 public class UserProfileActivity extends Activity {
@@ -38,7 +39,7 @@ public class UserProfileActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.user_profile);
+        setContentView(R.layout.contact_profile);
 
         intent=getIntent();
         RelativeLayout videoCallLayout = (RelativeLayout) findViewById(R.id.video_call_layout);
@@ -62,16 +63,24 @@ public class UserProfileActivity extends Activity {
 
         //define listeners for buttons and set tags
         String userID = intent.getStringExtra(MainActivity.USER_ID);
-        videoCallButton.setTag(userID);
-        videoCallLayout.setTag(userID);
-        audioCallButton.setTag(userID);
-        audioCallLayout.setTag(userID);
+        CallButtonListener.CallHelper videoCallHelper = new CallButtonListener.CallHelper();
+        videoCallHelper.userID = userID;
+        videoCallHelper.callType = "video";
+
+        CallButtonListener.CallHelper audioCallHelper = new CallButtonListener.CallHelper();
+        audioCallHelper.userID = userID;
+        audioCallHelper.callType = "audio";
+
+        videoCallButton.setTag(videoCallHelper);
+        videoCallLayout.setTag(videoCallHelper);
+        audioCallButton.setTag(audioCallHelper);
+        audioCallLayout.setTag(audioCallHelper);
         sendMessageButton.setTag(userID);
         sendMessageLayout.setTag(userID);
-        videoCallLayout.setOnClickListener(new VideoCallButtonListener(this));
-        videoCallButton.setOnClickListener(new VideoCallButtonListener(this));
-        audioCallLayout.setOnClickListener(new AudioCallButtonListener(this));
-        audioCallButton.setOnClickListener(new AudioCallButtonListener(this));
+        videoCallLayout.setOnClickListener(new CallButtonListener(this));
+        videoCallButton.setOnClickListener(new CallButtonListener(this));
+        audioCallLayout.setOnClickListener(new CallButtonListener(this));
+        audioCallButton.setOnClickListener(new CallButtonListener(this));
         sendMessageLayout.setOnClickListener(new SendMessageButtonListener(this));
         sendMessageButton.setOnClickListener(new SendMessageButtonListener(this));
         userImage.setOnClickListener(changeUserImage);
@@ -107,6 +116,9 @@ public class UserProfileActivity extends Activity {
                         CallsAdapter.distinctContacts.clear();
                         CallsFragment.callsAdapter.notifyDataSetChanged();
 
+                        ContactsAdapter.distinctContacts.clear();
+                        ContactsFragment.adapter.notifyDataSetChanged();
+
                     }
                 })
                     .show();
@@ -141,6 +153,9 @@ public class UserProfileActivity extends Activity {
                 //clear distinct pictures list
                 CallsAdapter.distinctContacts.clear();
                 CallsFragment.callsAdapter.notifyDataSetChanged();
+
+                ContactsAdapter.distinctContacts.clear();
+                ContactsFragment.adapter.notifyDataSetChanged();
             }
         }
     }

@@ -17,9 +17,8 @@ import android.widget.Toast;
 import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
-import com.example.matija_pc.carewell.listeners.AudioCallButtonListener;
+import com.example.matija_pc.carewell.listeners.CallButtonListener;
 import com.example.matija_pc.carewell.listeners.DisplayUserProfileListener;
-import com.example.matija_pc.carewell.listeners.VideoCallButtonListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ public class CallsAdapter extends BaseAdapter {
     ArrayList<HashMap<String, String>> mCalls;
     Context mContext;
     Activity mActivity;
-    public static ArrayList<UserImageLoader> distinctContacts = new ArrayList<UserImageLoader>();
+    public static ArrayList<UserImageLoader> distinctContacts;
     String selectDistinct = "SELECT DISTINCT " + DatabaseTables.CallsLog.PERSON_CALLED +
             " FROM " + DatabaseTables.CallsLog.TABLE_NAME;
 
@@ -42,8 +41,10 @@ public class CallsAdapter extends BaseAdapter {
         mContext = activity.getApplicationContext();
         mCalls = calls;
         mActivity = activity;
+        distinctContacts = new ArrayList<>();
         DatabaseOperations databaseOperations = new DatabaseOperations(mContext);
-        //select all distinct persons called and read their pictures
+
+        //select all distinct persons called and get their pictures
         Cursor result = databaseOperations.select(selectDistinct, null);
         result.moveToFirst();
         while (!result.isAfterLast()) {
@@ -111,7 +112,6 @@ public class CallsAdapter extends BaseAdapter {
         if(!result.moveToFirst()) {
             personCalled.setText("Unknown");
             userPicture.setImageResource(R.drawable.generic_picture);
-            //distinctContacts.clear();
             for (int i=0; i<distinctContacts.size(); i++)
                 if (distinctContacts.get(i).userID.equals(callsHolder.personCalled)) {
                     distinctContacts.remove(i);
@@ -141,15 +141,24 @@ public class CallsAdapter extends BaseAdapter {
             contactsHolder.userID = result.getString(result.getColumnIndex(DatabaseTables.Contacts.USER_ID));
 
             RelativeLayout relativeLayout = (RelativeLayout) v.findViewById(R.id.call_log_relative_layout);
+            relativeLayout.setLongClickable(true);
             relativeLayout.setTag(contactsHolder);
             relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));
 
-            videoCall.setTag(callsHolder.personCalled);
-            audioCall.setTag(callsHolder.personCalled);
+            CallButtonListener.CallHelper videoCallHelper = new CallButtonListener.CallHelper();
+            videoCallHelper.userID = callsHolder.personCalled;
+            videoCallHelper.callType = "video";
+
+            CallButtonListener.CallHelper audioCallHelper = new CallButtonListener.CallHelper();
+            audioCallHelper.userID = callsHolder.personCalled;
+            audioCallHelper.callType = "audio";
+
+            videoCall.setTag(videoCallHelper);
+            audioCall.setTag(audioCallHelper);
 
             //userPicture.setOnClickListener(new DisplayUserProfileListener(mActivity));
-            videoCall.setOnClickListener(new VideoCallButtonListener(mActivity));
-            audioCall.setOnClickListener(new AudioCallButtonListener(mActivity));
+            videoCall.setOnClickListener(new CallButtonListener(mActivity));
+            audioCall.setOnClickListener(new CallButtonListener(mActivity));
         }
         //set the name of the person
 

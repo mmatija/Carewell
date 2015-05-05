@@ -6,7 +6,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/call_log_relative_layout">
+        android:id="@+id/call_log_relative_layout"
+        android:background="@drawable/custom_button">
 
         <ImageView
             android:layout_width="90dp"

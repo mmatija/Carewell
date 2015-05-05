@@ -6,12 +6,14 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.matija_pc.carewell.R;
@@ -27,6 +29,7 @@ import java.util.HashMap;
  */
 public class CallsFragment extends Fragment {
 
+    private static final int CALLS_CONTEXT_MENU_GROUP = 1;
     public static ArrayList<HashMap<String, String>> calls;
     public static CallsAdapter callsAdapter;
     public ListView listView;
@@ -47,8 +50,8 @@ public class CallsFragment extends Fragment {
         calls = new ArrayList<HashMap<String, String>>();
         callsAdapter = new CallsAdapter(getActivity(), calls);
         listView.setAdapter(callsAdapter);
-        //listView.setItemsCanFocus(true);
-        //registerForContextMenu(listView);
+        listView.setItemsCanFocus(true);
+        registerForContextMenu(listView);
         new GetCallsFromDatabase().execute();
     }
 
@@ -61,6 +64,7 @@ public class CallsFragment extends Fragment {
             result.moveToFirst();
             while (!result.isAfterLast()) {
                 HashMap<String, String> call = new HashMap<String, String>();
+                call.put(DatabaseTables.CallsLog._ID, result.getString(result.getColumnIndex(DatabaseTables.CallsLog._ID)));
                 call.put(DatabaseTables.CallsLog.PERSON_CALLED, result.getString(result.getColumnIndex(DatabaseTables.CallsLog.PERSON_CALLED)));
                 call.put(DatabaseTables.CallsLog.CALL_TYPE, result.getString(result.getColumnIndex(DatabaseTables.CallsLog.CALL_TYPE)));
                 call.put(DatabaseTables.CallsLog.CALL_DIRECTION, result.getString(result.getColumnIndex(DatabaseTables.CallsLog.CALL_DIRECTION)));
@@ -83,14 +87,17 @@ public class CallsFragment extends Fragment {
         }
     }
 
-    /*public void onCreateContextMenu (ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, view, menuInfo);
-        menu.add(0, view.getId(), 0, "Delete");
+    public void onCreateContextMenu (ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        //super.onCreateContextMenu(menu, view, menuInfo);
+        menu.add(CALLS_CONTEXT_MENU_GROUP, view.getId(), 0, "Delete");
+        menu.add(CALLS_CONTEXT_MENU_GROUP, view.getId(), 0, "Delete All");
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
+        if(menuItem.getGroupId() != CALLS_CONTEXT_MENU_GROUP) return super.onContextItemSelected(menuItem);
         AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
         final String _id = calls.get(adapterContextMenuInfo.position).get(DatabaseTables.CallsLog._ID);
+
 
         if (menuItem.getTitle().toString().equals("Delete")) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -105,6 +112,10 @@ public class CallsFragment extends Fragment {
                                 .show();
 
             return true;
+        }
+
+        if (menuItem.getTitle().toString().equals("Delete All")) {
+            deleteAllCallLogs();
         }
 
         return super.onContextItemSelected(menuItem);
@@ -122,7 +133,7 @@ public class CallsFragment extends Fragment {
                 break;
             }
         }
-    }*/
+    }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater);
@@ -130,25 +141,25 @@ public class CallsFragment extends Fragment {
     }
 
     private void deleteAllCallLogs() {
-        DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
-        databaseOperations.delete(DatabaseTables.CallsLog.TABLE_NAME, null, null);
-        calls.clear();
-        callsAdapter.notifyDataSetChanged();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Delete all call logs?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
+                databaseOperations.delete(DatabaseTables.CallsLog.TABLE_NAME, null, null);
+                calls.clear();
+                callsAdapter.notifyDataSetChanged();
+            }
+        })
+               .setNegativeButton("No", null)
+               .show();
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_delete_all:
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Delete all call logs?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteAllCallLogs();
-                    }
-                })
-                       .setNegativeButton("No", null)
-                       .show();
+                deleteAllCallLogs();
                 return true;
         }
 
