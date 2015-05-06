@@ -103,6 +103,8 @@ public class CallsAdapter extends BaseAdapter {
         ImageButton videoCall = (ImageButton) v.findViewById(R.id.video_call_button);
         ImageButton audioCall = (ImageButton) v.findViewById(R.id.audio_call_button);
         ImageView userPicture = (ImageView) v.findViewById(R.id.user_picture_thumbnail);
+        RelativeLayout relativeLayout = (RelativeLayout) v.findViewById(R.id.call_log_relative_layout);
+        relativeLayout.setLongClickable(true);
 
         DatabaseOperations databaseOperations = new DatabaseOperations(mContext);
         Cursor result = databaseOperations.select(rawQuery, callsHolder.personCalled);
@@ -140,8 +142,7 @@ public class CallsAdapter extends BaseAdapter {
             contactsHolder.imagePath = result.getString(result.getColumnIndex(DatabaseTables.Contacts.IMAGE_PATH));
             contactsHolder.userID = result.getString(result.getColumnIndex(DatabaseTables.Contacts.USER_ID));
 
-            RelativeLayout relativeLayout = (RelativeLayout) v.findViewById(R.id.call_log_relative_layout);
-            relativeLayout.setLongClickable(true);
+
             relativeLayout.setTag(contactsHolder);
             relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));
 

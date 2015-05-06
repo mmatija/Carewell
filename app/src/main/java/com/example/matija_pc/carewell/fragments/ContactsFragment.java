@@ -145,6 +145,7 @@ public class ContactsFragment extends Fragment {
             }
         }
         adapter.notifyDataSetChanged();
+        CallsFragment.callsAdapter.notifyDataSetChanged();
         Toast.makeText(getActivity().getApplicationContext(), "Contact deleted", Toast.LENGTH_SHORT).show();
     }
 

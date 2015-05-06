@@ -39,7 +39,7 @@
         android:background="@drawable/custom_button"
         android:gravity="center_vertical"
         android:paddingLeft="5dp"
-        android:text="aaaaaa"/>
+        android:text="Placeholder name"/>
 
     <LinearLayout
         android:id="@+id/linear_layout_1"

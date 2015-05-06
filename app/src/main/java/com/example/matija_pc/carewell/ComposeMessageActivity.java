@@ -153,9 +153,11 @@ public class ComposeMessageActivity extends Activity {
                         databaseOperations.insert(DatabaseTables.Conversations.TABLE_NAME, contentValues);
                         HashMap<String, String> conversation = new HashMap<>();
                         conversation.put(DatabaseTables.Conversations.USER_ID, userID);
-                        ConversationsFragment.conversations.add(conversation);
+                        if (ConversationsFragment.conversations != null)
+                            ConversationsFragment.conversations.add(conversation);
                     }
-                    ConversationsFragment.adapter.notifyDataSetChanged();
+                    if (ConversationsFragment.adapter != null)
+                        ConversationsFragment.adapter.notifyDataSetChanged();
                     //start new activity in which all messages exchanged with this user are shown
                     Intent intent = new Intent(getApplicationContext(), MessagesActivity.class);
                     intent.putExtra(MainActivity.USER_ID, userID);

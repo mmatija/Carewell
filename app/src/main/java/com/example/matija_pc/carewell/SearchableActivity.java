@@ -39,6 +39,8 @@ public class SearchableActivity extends Activity {
         //get intent
         Intent intent = getIntent();
         String query = intent.getStringExtra(SearchManager.QUERY);
+        if (query.equals("")) getActionBar().setTitle("All contacts");
+        else getActionBar().setTitle("Search results");
         //do search
         new GetSearchResult().execute(query);
         listView.setOnItemClickListener(onItemClickListener);
