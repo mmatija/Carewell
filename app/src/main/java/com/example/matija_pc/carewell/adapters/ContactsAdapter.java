@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.matija_pc.carewell.R;
@@ -76,15 +77,18 @@ public class ContactsAdapter extends BaseAdapter {
         contactsHolder.imagePath = mContacts.get(position).get(DatabaseTables.Contacts.IMAGE_PATH);
 
 
-
+        RelativeLayout relativeLayout = (RelativeLayout) v.findViewById(R.id.contact_relative_layout);
+        relativeLayout.setLongClickable(true);
+        relativeLayout.setTag(contactsHolder);
+        relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));
         ImageView userImage = (ImageView) v.findViewById(R.id.user_picture_thumbnail);
         TextView userInfo = (TextView) v.findViewById(R.id.user_info);
-        userInfo.setLongClickable(true);
+        //userInfo.setLongClickable(true);
         userInfo.setText(contactsHolder.firstName + " " + contactsHolder.lastName);
         userImage.setTag(contactsHolder);
-        userInfo.setTag(contactsHolder);
+        //userInfo.setTag(contactsHolder);
         userImage.setOnClickListener(new DisplayUserProfileListener(mActivity));
-        userInfo.setOnClickListener(new DisplayUserProfileListener(mActivity));
+        //userInfo.setOnClickListener(new DisplayUserProfileListener(mActivity));
 
         boolean userImageExists = false;
         for (UserImageLoader iter : distinctContacts) {

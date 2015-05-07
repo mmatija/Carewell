@@ -3,69 +3,75 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/container">
+    >
 
-    <LinearLayout
-        android:id="@+id/thumbnail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="5dip">
-
-        <ImageView
-            android:id="@+id/user_picture_thumbnail"
-            android:layout_width="100dp"
-            android:layout_height="100dip"
-            android:src="@drawable/generic_picture"
-            android:background="@android:color/darker_gray"
-            android:clickable="true"
-        />
-    </LinearLayout>
-
-
-
-
-    <TextView
-        android:id="@+id/user_info"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textColor="@android:color/black"
-        android:layout_toRightOf="@id/thumbnail"
-        android:layout_toLeftOf="@+id/linear_layout_1"
-        android:layout_alignTop="@id/thumbnail"
-        android:layout_alignBottom="@id/thumbnail"
-        android:textSize="20sp"
-        android:clickable="true"
-        android:background="@drawable/custom_button"
-        android:gravity="center_vertical"
-        android:paddingLeft="5dp"
-        android:text="Placeholder name"/>
-
-    <LinearLayout
-        android:id="@+id/linear_layout_1"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/thumbnail"
-        android:layout_alignParentRight="true"
-        android:orientation="vertical">
-        <ImageButton
-            android:id="@+id/video_call_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/video_call_icon"
-            android:layout_alignParentLeft="true"
-            android:focusable="false"
-        />
+        android:id="@+id/contact_relative_layout"
+        android:background="@drawable/custom_button">
 
-        <ImageButton
-            android:id="@+id/audio_call_button"
+        <LinearLayout
+            android:id="@+id/thumbnail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/audio_call_icon"
-            android:layout_centerHorizontal="true"
-            android:focusable="false"
-         />
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="5dip">
+
+            <ImageView
+                android:id="@+id/user_picture_thumbnail"
+                android:layout_width="100dp"
+                android:layout_height="100dip"
+                android:src="@drawable/generic_picture"
+                android:background="@android:color/darker_gray"
+                 />
         </LinearLayout>
+
+
+
+
+        <TextView
+            android:id="@+id/user_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@android:color/black"
+            android:layout_toRightOf="@id/thumbnail"
+            android:layout_toLeftOf="@+id/linear_layout_1"
+            android:layout_alignTop="@id/thumbnail"
+            android:layout_alignBottom="@id/thumbnail"
+            android:textSize="20sp"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:text="Placeholder name"/>
+
+        <LinearLayout
+            android:id="@+id/linear_layout_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/thumbnail"
+            android:layout_alignParentRight="true"
+            android:orientation="vertical">
+            <ImageButton
+                android:id="@+id/video_call_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/video_call_icon"
+                android:layout_alignParentLeft="true"
+                android:focusable="false"
+            />
+
+            <ImageButton
+                android:id="@+id/audio_call_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/audio_call_icon"
+                android:layout_centerHorizontal="true"
+                android:focusable="false"
+             />
+            </LinearLayout>
+
+    </RelativeLayout>
+
 
 
 

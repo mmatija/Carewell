@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.matija_pc.carewell.adapters.CallsAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
@@ -37,7 +36,7 @@ public class CallButtonListener implements View.OnClickListener {
         CallHelper callHelper = (CallHelper) v.getTag();
         String personCalled = callHelper.userID;
         String callType = callHelper.callType;
-        Toast.makeText(mContext, callType, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(mContext, callType, Toast.LENGTH_SHORT).show();
         ContentValues values = new ContentValues();
         Calendar calendar = Calendar.getInstance();
         long callStart = calendar.getTimeInMillis();

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.matija_pc.carewell.ComposeMessageActivity;
 import com.example.matija_pc.carewell.MainActivity;
@@ -25,7 +24,7 @@ public class SendMessageButtonListener implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Toast.makeText(mActivity.getApplicationContext(), "Send message", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(mActivity.getApplicationContext(), "Send message", Toast.LENGTH_SHORT).show();
         String userID = (String) v.getTag();
         DatabaseOperations databaseOperations = new DatabaseOperations(mActivity.getApplicationContext());
         String query = "SELECT * FROM " + DatabaseTables.Conversations.TABLE_NAME + " WHERE " + DatabaseTables.Conversations.USER_ID + "=?";
