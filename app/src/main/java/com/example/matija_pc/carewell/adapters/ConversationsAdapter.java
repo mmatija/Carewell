@@ -71,13 +71,18 @@ public class ConversationsAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        if (view == null)
+        //use viewHolder pattern so findViewById gets called only once
+        ConversationsViewHolder conversationsViewHolder = new ConversationsViewHolder();
+        if (view == null) {
             view = LayoutInflater.from(mContext).inflate(R.layout.message_conversation, null);
+            conversationsViewHolder.userImage = (ImageView) view.findViewById(R.id.user_picture_thumbnail);
+            conversationsViewHolder.userInfo = (TextView) view.findViewById(R.id.user_info);
+            conversationsViewHolder.lastMessage = (TextView) view.findViewById(R.id.last_message_text);
+            conversationsViewHolder.messageDate = (TextView) view.findViewById(R.id.message_date);
+            view.setTag(conversationsViewHolder);
+        }
+        else conversationsViewHolder = (ConversationsViewHolder) view.getTag();
 
-        ImageView userImage = (ImageView) view.findViewById(R.id.user_picture_thumbnail);
-        TextView userInfo = (TextView) view.findViewById(R.id.user_info);
-        TextView lastMessage = (TextView) view.findViewById(R.id.last_message_text);
-        TextView messageDate = (TextView) view.findViewById(R.id.message_date);
 
         String queryUserData = "SELECT " + DatabaseTables.Contacts.FIRST_NAME + " , " + DatabaseTables.Contacts.LAST_NAME +
                        " FROM " + DatabaseTables.Contacts.TABLE_NAME + " WHERE " +
@@ -89,12 +94,12 @@ public class ConversationsAdapter extends BaseAdapter {
 
         //if the user does not exist in database, set the name to "unknown"
         if (!result.moveToNext()) {
-            userInfo.setText("Unknown");
+            conversationsViewHolder.userInfo.setText("Unknown");
         }
         else {
             String firstName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME));
             String lastName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.LAST_NAME));
-            userInfo.setText(firstName + " " + lastName);
+            conversationsViewHolder.userInfo.setText(firstName + " " + lastName);
         }
 
         result.close();
@@ -106,30 +111,37 @@ public class ConversationsAdapter extends BaseAdapter {
         result = databaseOperations.select(queryLastMessage, mConversations.get(position).get(DatabaseTables.Conversations.USER_ID));
         result.moveToFirst();
         String messageText = result.getString(result.getColumnIndex(DatabaseTables.Messages.MESSAGE_TEXT));
-        lastMessage.setText(messageText);
+        conversationsViewHolder.lastMessage.setText(messageText);
 
         long timestamp = result.getLong(result.getColumnIndex(DatabaseTables.Messages.TIMESTAMP));
         Date date = new Date(timestamp);
         SimpleDateFormat dateFormat = new SimpleDateFormat();
-        messageDate.setText(dateFormat.format(date));
+        conversationsViewHolder.messageDate.setText(dateFormat.format(date));
 
         result.close();
 
         //set user image
-        userImage.setBackgroundColor(Color.parseColor("#ff9e9e9e"));
+        conversationsViewHolder.userImage.setBackgroundColor(Color.parseColor("#ff9e9e9e"));
         for (int i=0; i<distinctUserImages.size(); i++) {
             if (mConversations.get(position).get(DatabaseTables.Conversations.USER_ID).equals(distinctUserImages.get(i).userID)) {
                 if (distinctUserImages.get(i).bitmap!=null) {
-                    userImage.setImageBitmap(distinctUserImages.get(i).bitmap);
-                    userImage.setBackgroundColor(0x0);
+                    conversationsViewHolder.userImage.setImageBitmap(distinctUserImages.get(i).bitmap);
+                    conversationsViewHolder.userImage.setBackgroundColor(0x0);
                 }
                 else {
-                    userImage.setImageResource(R.drawable.generic_picture);
+                    conversationsViewHolder.userImage.setImageResource(R.drawable.generic_picture);
                 }
                 break;
             }
         }
 
         return view;
+    }
+
+    private class ConversationsViewHolder {
+        public ImageView userImage;
+        public TextView userInfo;
+        public TextView lastMessage;
+        public TextView messageDate;
     }
 }

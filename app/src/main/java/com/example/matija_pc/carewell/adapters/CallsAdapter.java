@@ -54,7 +54,6 @@ public class CallsAdapter extends BaseAdapter {
             result.moveToNext();
         }
         result.close();
-        //new GetUserImages().execute();
     }
 
     @Override
@@ -75,9 +74,22 @@ public class CallsAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
+        CallsViewHolder callsViewHolder = new CallsViewHolder();
+
         if (v == null) {
             v = LayoutInflater.from(mContext).inflate(R.layout.call_log, null);
+            callsViewHolder.userImage = (ImageView) v.findViewById(R.id.user_picture_thumbnail);
+            callsViewHolder.userInfo = (TextView) v.findViewById(R.id.user_info);
+            callsViewHolder.callDirection = (ImageView) v.findViewById(R.id.call_direction);
+            callsViewHolder.callType = (ImageView) v.findViewById(R.id.call_type);
+            callsViewHolder.callDuration = (TextView) v.findViewById(R.id.call_duration);
+            callsViewHolder.callTime = (TextView) v.findViewById(R.id.call_time);
+            callsViewHolder.videoCallButton = (ImageButton) v.findViewById(R.id.video_call_button);
+            callsViewHolder.audioCallButton = (ImageButton) v.findViewById(R.id.audio_call_button);
+            callsViewHolder.relativeLayout = (RelativeLayout) v.findViewById(R.id.call_log_relative_layout);
+            v.setTag(callsViewHolder);
         }
+        else callsViewHolder = (CallsViewHolder) v.getTag();
 
         CallsHolderClass.CallsHolder callsHolder = new CallsHolderClass.CallsHolder();
         callsHolder._ID = mCalls.get(position).get(DatabaseTables.CallsLog._ID);
@@ -95,38 +107,33 @@ public class CallsAdapter extends BaseAdapter {
 
         String rawQuery = "SELECT * FROM " + DatabaseTables.Contacts.TABLE_NAME + " WHERE " +
                             DatabaseTables.Contacts.USER_ID + "=?";
-        TextView personCalled = (TextView) v.findViewById(R.id.user_info);
-        TextView callDuration = (TextView) v.findViewById(R.id.call_duration);
-        ImageView callDirection = (ImageView) v.findViewById(R.id.call_direction);
-        ImageView callType = (ImageView) v.findViewById(R.id.call_type);
-        TextView callTime = (TextView) v.findViewById(R.id.call_time);
-        ImageButton videoCall = (ImageButton) v.findViewById(R.id.video_call_button);
-        ImageButton audioCall = (ImageButton) v.findViewById(R.id.audio_call_button);
-        ImageView userPicture = (ImageView) v.findViewById(R.id.user_picture_thumbnail);
-        RelativeLayout relativeLayout = (RelativeLayout) v.findViewById(R.id.call_log_relative_layout);
-        relativeLayout.setLongClickable(true);
+
 
         DatabaseOperations databaseOperations = new DatabaseOperations(mContext);
         Cursor result = databaseOperations.select(rawQuery, callsHolder.personCalled);
 
+        callsViewHolder.relativeLayout.setLongClickable(true);
 
         //if there are no rows, i.e. user is deleted
         if(!result.moveToFirst()) {
-            personCalled.setText("Unknown");
-            userPicture.setImageResource(R.drawable.generic_picture);
+            callsViewHolder.userInfo.setText("Unknown");
+            callsViewHolder.userImage.setImageResource(R.drawable.generic_picture);
             for (int i=0; i<distinctContacts.size(); i++)
                 if (distinctContacts.get(i).userID.equals(callsHolder.personCalled)) {
                     distinctContacts.remove(i);
                     break;
                 }
-            videoCall.setOnClickListener(new View.OnClickListener() {
+
+            //set call button listeners to display a message that this user cannot be called
+            callsViewHolder.videoCallButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(mContext, "Cannot call this user", Toast.LENGTH_SHORT).show();
                 }
             });
 
-            audioCall.setOnClickListener(new View.OnClickListener() {
+
+            callsViewHolder.audioCallButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(mContext, "Cannot call this user", Toast.LENGTH_SHORT).show();
@@ -135,7 +142,10 @@ public class CallsAdapter extends BaseAdapter {
         }
 
         else {
-            personCalled.setText(result.getString(result.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME)) + " " + result.getString(result.getColumnIndex(DatabaseTables.Contacts.LAST_NAME)));
+            String firstName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME));
+            String lastName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.LAST_NAME));
+            callsViewHolder.userInfo.setText(firstName + " " + lastName);
+
             ContactsHolderClass.ContactsHolder contactsHolder = new ContactsHolderClass.ContactsHolder();
             contactsHolder.firstName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME));
             contactsHolder.lastName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.LAST_NAME));
@@ -143,8 +153,8 @@ public class CallsAdapter extends BaseAdapter {
             contactsHolder.userID = result.getString(result.getColumnIndex(DatabaseTables.Contacts.USER_ID));
 
 
-            relativeLayout.setTag(contactsHolder);
-            relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));
+            callsViewHolder.relativeLayout.setTag(contactsHolder);
+            callsViewHolder.relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));
 
             CallButtonListener.CallHelper videoCallHelper = new CallButtonListener.CallHelper();
             videoCallHelper.userID = callsHolder.personCalled;
@@ -154,12 +164,12 @@ public class CallsAdapter extends BaseAdapter {
             audioCallHelper.userID = callsHolder.personCalled;
             audioCallHelper.callType = "audio";
 
-            videoCall.setTag(videoCallHelper);
-            audioCall.setTag(audioCallHelper);
 
-            //userPicture.setOnClickListener(new DisplayUserProfileListener(mActivity));
-            videoCall.setOnClickListener(new CallButtonListener(mActivity));
-            audioCall.setOnClickListener(new CallButtonListener(mActivity));
+            callsViewHolder.videoCallButton.setTag(videoCallHelper);
+            callsViewHolder.audioCallButton.setTag(audioCallHelper);
+
+            callsViewHolder.videoCallButton.setOnClickListener(new CallButtonListener(mActivity));
+            callsViewHolder.audioCallButton.setOnClickListener(new CallButtonListener(mActivity));
         }
         //set the name of the person
 
@@ -168,38 +178,34 @@ public class CallsAdapter extends BaseAdapter {
         Date tempDuration = new Date(Long.parseLong(callsHolder.callDuration));
 
         String startDate = dateFormat.format(tempStartDate);
-        //String endDate = dateFormat.format(date2);
-        callTime.setText(startDate);    //set call time
 
+        callsViewHolder.callTime.setText(startDate);
         //calculate call duration
         long durationMilliseconds = tempDuration.getTime();
 
         String duration = calculateCallDuration(durationMilliseconds);
-        callDuration.setText("Duration: "+duration);
+        callsViewHolder.callDuration.setText("Duration: " + duration);
 
         String tempCallDirection = callsHolder.callDirection;
-        setCallDirectionIcon(callDirection, tempCallDirection);
+        setCallDirectionIcon(callsViewHolder.callDirection, tempCallDirection);
 
         String tempCallType = callsHolder.callType;
-        setCallType(callType, tempCallType);
+        setCallType(callsViewHolder.callType, tempCallType);
 
 
-
-        //userPicture.setImageResource(R.drawable.generic_picture);
         //set user image
-
-        userPicture.setBackgroundColor(Color.parseColor("#ff9e9e9e"));
+        callsViewHolder.userImage.setBackgroundColor(Color.parseColor("#ff9e9e9e"));
         boolean userImageExists = false;
         for (int i=0; i<distinctContacts.size(); i++) {
             //if image is already loaded
             if (distinctContacts.get(i).userID.equals(callsHolder.personCalled)) {
                 userImageExists = true;
                 if (distinctContacts.get(i).bitmap!=null) {
-                    userPicture.setImageBitmap(distinctContacts.get(i).bitmap);
-                    userPicture.setBackgroundColor(0x0);
+                    callsViewHolder.userImage.setImageBitmap(distinctContacts.get(i).bitmap);
+                    callsViewHolder.userImage.setBackgroundColor(0x0);
                 }
                 else {
-                    userPicture.setImageResource(R.drawable.generic_picture);
+                    callsViewHolder.userImage.setImageResource(R.drawable.generic_picture);
                 }
                 break;
             }
@@ -209,11 +215,11 @@ public class CallsAdapter extends BaseAdapter {
             UserImageLoader imageLoader = new UserImageLoader(callsHolder.personCalled, mContext);
             distinctContacts.add(imageLoader);
             if (imageLoader.bitmap!=null) {
-                userPicture.setImageBitmap(imageLoader.bitmap);
-                userPicture.setBackgroundColor(0x0);
+                callsViewHolder.userImage.setImageBitmap(imageLoader.bitmap);
+                callsViewHolder.userImage.setBackgroundColor(0x0);
             }
             else {
-                userPicture.setImageResource(R.drawable.generic_picture);
+                callsViewHolder.userImage.setImageResource(R.drawable.generic_picture);
             }
         }
 
@@ -271,5 +277,16 @@ public class CallsAdapter extends BaseAdapter {
             iv.setImageResource(R.drawable.audio_call_icon);
     }
 
+    private class CallsViewHolder {
+        public RelativeLayout relativeLayout;
+        public ImageView userImage;
+        public TextView userInfo;
+        public ImageView callDirection;
+        public ImageView callType;
+        public TextView callDuration;
+        public TextView callTime;
+        public ImageButton videoCallButton;
+        public ImageButton audioCallButton;
+    }
 
 }

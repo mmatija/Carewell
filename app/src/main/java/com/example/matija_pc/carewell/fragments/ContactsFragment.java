@@ -41,6 +41,7 @@ public class ContactsFragment extends Fragment {
     public static ArrayList<HashMap<String, String>> contacts;
     public static ContactsAdapter adapter;
     ListView listView;
+    GetContactsFromDatabase getContactsFromDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,8 +57,15 @@ public class ContactsFragment extends Fragment {
         listView.setItemsCanFocus(true);
         //insertTestData();
         registerForContextMenu(listView);
-        new GetContactsFromDatabase().execute();
+        getContactsFromDatabase = new GetContactsFromDatabase();
+        getContactsFromDatabase.execute();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        //cancel task on tab change to prevent crashes when tabs are changed quickly
+        getContactsFromDatabase.cancel(true);
     }
 
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -102,6 +110,7 @@ public class ContactsFragment extends Fragment {
     }
 
     public class GetContactsFromDatabase extends AsyncTask<Void, Void, Void> {
+        ArrayList<HashMap<String, String>> tempContacts = new ArrayList<>();
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -113,14 +122,14 @@ public class ContactsFragment extends Fragment {
 
             //read all rows
             while (!cursor.isAfterLast()) {
-                HashMap<String, String> row = new HashMap<String, String>();
-                row.put(DatabaseTables.Contacts._ID, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts._ID)));
-                row.put(DatabaseTables.Contacts.USER_ID, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.USER_ID)));
-                row.put(DatabaseTables.Contacts.FIRST_NAME, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME)));
-                row.put(DatabaseTables.Contacts.LAST_NAME, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.LAST_NAME)));
-                row.put(DatabaseTables.Contacts.IMAGE_PATH, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.IMAGE_PATH)));
-                if (!contacts.contains(row))
-                    contacts.add(row);
+                HashMap<String, String> contact = new HashMap<String, String>();
+                contact.put(DatabaseTables.Contacts._ID, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts._ID)));
+                contact.put(DatabaseTables.Contacts.USER_ID, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.USER_ID)));
+                contact.put(DatabaseTables.Contacts.FIRST_NAME, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME)));
+                contact.put(DatabaseTables.Contacts.LAST_NAME, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.LAST_NAME)));
+                contact.put(DatabaseTables.Contacts.IMAGE_PATH, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.IMAGE_PATH)));
+                contacts.add(contact);
+                //tempContacts.add(contact);
                 cursor.moveToNext();
             }
             cursor.close();
@@ -129,6 +138,7 @@ public class ContactsFragment extends Fragment {
         }
 
         protected void onPostExecute(Void v){
+            //contacts = tempContacts;
             adapter.notifyDataSetChanged();
         }
     }

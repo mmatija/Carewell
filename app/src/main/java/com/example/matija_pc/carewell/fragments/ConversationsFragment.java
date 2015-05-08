@@ -37,6 +37,7 @@ public class ConversationsFragment extends Fragment {
     ListView listView;
     public static ArrayList<HashMap<String, String>> conversations;
     public static ConversationsAdapter adapter;
+    GetConversationsFromDatabase getConversationsFromDatabase;
 
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +58,15 @@ public class ConversationsFragment extends Fragment {
         listView.setItemsCanFocus(true);
         listView.setOnItemClickListener(onItemClickListener);
         registerForContextMenu(listView);
-        new GetConversationsFromDatabase().execute();
+        getConversationsFromDatabase = new GetConversationsFromDatabase();
+        getConversationsFromDatabase.execute();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //cancel task on tab change to prevent crashes when tabs are changed quickly
+        getConversationsFromDatabase.cancel(true);
     }
 
     public void onCreateContextMenu (ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
@@ -90,7 +99,7 @@ public class ConversationsFragment extends Fragment {
     }
 
     private class GetConversationsFromDatabase extends AsyncTask<Void, Void, Void> {
-
+        ArrayList<HashMap<String, String>> tempConversations = new ArrayList<>();
         @Override
         protected Void doInBackground(Void... params) {
             DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
@@ -100,6 +109,7 @@ public class ConversationsFragment extends Fragment {
                 HashMap<String, String> conversation = new HashMap<>();
                 conversation.put(DatabaseTables.Conversations.USER_ID, result.getString(result.getColumnIndex(DatabaseTables.Conversations.USER_ID)));
                 conversations.add(conversation);
+                //tempConversations.add(conversation);
                 result.moveToNext();
             }
             result.close();
@@ -107,6 +117,7 @@ public class ConversationsFragment extends Fragment {
         }
 
         protected void onPostExecute(Void param) {
+            //conversations = tempConversations;
             adapter.notifyDataSetChanged();
         }
     }

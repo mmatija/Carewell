@@ -33,6 +33,7 @@ public class CallsFragment extends Fragment {
     public static ArrayList<HashMap<String, String>> calls;
     public static CallsAdapter callsAdapter;
     public ListView listView;
+    GetCallsFromDatabase getCallsFromDatabase;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,10 +53,19 @@ public class CallsFragment extends Fragment {
         listView.setAdapter(callsAdapter);
         listView.setItemsCanFocus(true);
         registerForContextMenu(listView);
-        new GetCallsFromDatabase().execute();
+        getCallsFromDatabase = new GetCallsFromDatabase();
+        getCallsFromDatabase.execute();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //cancel task on tab change to prevent crashes when tabs are changed quickly
+        getCallsFromDatabase.cancel(true);
     }
 
     private class GetCallsFromDatabase extends AsyncTask<Void, Void, Void> {
+        ArrayList<HashMap<String, String>> tempCalls = new ArrayList<>();
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -75,6 +85,7 @@ public class CallsFragment extends Fragment {
                 long callDuration = result.getLong(result.getColumnIndex(DatabaseTables.CallsLog.CALL_DURATION));
                 call.put(DatabaseTables.CallsLog.CALL_DURATION, String.valueOf(callDuration));
                 calls.add(call);
+                //tempCalls.add(call);
                 result.moveToNext();
 
             }
@@ -83,6 +94,7 @@ public class CallsFragment extends Fragment {
         }
 
         protected void onPostExecute (Void param) {
+            //calls = tempCalls;
             callsAdapter.notifyDataSetChanged();
         }
     }
