@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "CarewellDatabase.db";
 
     public DatabaseHelper(Context context) {
@@ -19,9 +19,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //Log.d("Contacts", DatabaseTables.CREATE_TABLE_CONTACTS);
-        //Log.d("Calls Log", DatabaseTables.CREATE_TABLE_CALLS_LOG);
-        //Log.d("Messages", DatabaseTables.CREATE_TABLE_MESSAGES);
         db.execSQL(DatabaseTables.CREATE_TABLE_CONTACTS);
         db.execSQL(DatabaseTables.CREATE_TABLE_CALLS_LOG);
         db.execSQL(DatabaseTables.CREATE_TABLE_MESSAGES);

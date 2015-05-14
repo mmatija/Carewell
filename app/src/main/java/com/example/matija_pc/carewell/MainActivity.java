@@ -87,6 +87,20 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         });
     }
 
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+        pager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,20 +120,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        pager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
 
     public void onActivityResult (int requestCode, int resultCode, Intent data){
         if (resultCode==DELETE) {

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -86,9 +85,6 @@ public class SearchableActivity extends Activity {
             String userID = contacts.get(position).get(DatabaseTables.Contacts.USER_ID);
             String firstName = contacts.get(position).get(DatabaseTables.Contacts.FIRST_NAME);
             String lastName = contacts.get(position).get(DatabaseTables.Contacts.LAST_NAME);
-            Log.d("SearchableActivity", userID);
-            Log.d("SearchableActivity", firstName);
-            Log.d("SearchableActivity", lastName);
             returnIntent.putExtra(MainActivity.USER_ID, userID);
             returnIntent.putExtra(MainActivity.FIRST_NAME, firstName);
             returnIntent.putExtra(MainActivity.LAST_NAME, lastName);

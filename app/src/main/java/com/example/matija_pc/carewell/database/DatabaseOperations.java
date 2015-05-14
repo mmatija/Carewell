@@ -24,21 +24,16 @@ public class DatabaseOperations {
         writeDatabase.insert(tableName, null, contentValues);
     }
 
-    public void delete (String tableName, String where, String args) {
-        if (where==null && args==null)
-            writeDatabase.delete(tableName, null, null);
-        else
-            writeDatabase.delete(tableName, where+"=?", new String[] {args} );
+    public void delete (String tableName, String where, String... args) {
+        writeDatabase.delete(tableName, where+"=?", args );
     }
 
 
-    public void update (String tableName, ContentValues contentValues, String where, String value) {
-        writeDatabase.update(tableName, contentValues, where+"=?", new String[] {value});
+    public void update (String tableName, ContentValues contentValues, String where, String... value) {
+        writeDatabase.update(tableName, contentValues, where+"=?", value);
     }
 
     public Cursor select (String query, String... where) {
-        /*if (where==null)
-            return readDatabase.rawQuery(query, null);*/
         return readDatabase.rawQuery(query, where);
     }
 

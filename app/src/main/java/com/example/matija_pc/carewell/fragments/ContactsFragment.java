@@ -61,12 +61,6 @@ public class ContactsFragment extends Fragment {
         getContactsFromDatabase.execute();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        //cancel task on tab change to prevent crashes when tabs are changed quickly
-        getContactsFromDatabase.cancel(true);
-    }
 
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.contacts_fragment, container, false);

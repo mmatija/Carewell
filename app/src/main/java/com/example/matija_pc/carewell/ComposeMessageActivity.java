@@ -43,7 +43,6 @@ public class ComposeMessageActivity extends Activity {
     }
 
     protected void onNewIntent(Intent intent) {
-        //setIntent(intent);
         super.onNewIntent(intent);
         handleIntent(intent);
     }
@@ -150,11 +149,13 @@ public class ComposeMessageActivity extends Activity {
                     if (!result.moveToFirst()) {
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(DatabaseTables.Conversations.USER_ID, userID);
+                        contentValues.put(DatabaseTables.Conversations.LAST_MESSAGE_TIMESTAMP, timestamp);
                         databaseOperations.insert(DatabaseTables.Conversations.TABLE_NAME, contentValues);
                         HashMap<String, String> conversation = new HashMap<>();
                         conversation.put(DatabaseTables.Conversations.USER_ID, userID);
+                        conversation.put(DatabaseTables.Messages.TIMESTAMP, String.valueOf(timestamp));
                         if (ConversationsFragment.conversations != null)
-                            ConversationsFragment.conversations.add(conversation);
+                            ConversationsFragment.conversations.add(0, conversation);
                     }
                     if (ConversationsFragment.adapter != null)
                         ConversationsFragment.adapter.notifyDataSetChanged();

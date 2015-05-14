@@ -72,10 +72,8 @@ public class MessagesActivity extends Activity {
         getActionBar().setTitle(firstName + " " + lastName);
 
         messages = new ArrayList<>();
-        //editText.setOnFocusChangeListener(onFocusChangeListener);
         adapter = new MessagesAdapter(this, messages);
         listView.setAdapter(adapter);
-        //new GetMessagesFromDatabase().execute();
         //scrollMyListViewToBottom();
         getMessages();
         //scroll to the last message
@@ -125,6 +123,11 @@ public class MessagesActivity extends Activity {
                 contentValues.put(DatabaseTables.Messages.MESSAGE_TEXT, messageText);
                 databaseOperations.insert(DatabaseTables.Messages.TABLE_NAME, contentValues);
 
+                //update timestamp of last message in Conversations table
+                contentValues = new ContentValues();
+                contentValues.put(DatabaseTables.Conversations.LAST_MESSAGE_TIMESTAMP, timestamp);
+                databaseOperations.update(DatabaseTables.Conversations.TABLE_NAME, contentValues, DatabaseTables.Conversations.USER_ID, userID);
+
                 //add new message to list and refresh the adapter
                 HashMap<String, String> newMessage = new HashMap<>();
                 newMessage.put(DatabaseTables.Messages.USER_ID, userID);
@@ -133,8 +136,21 @@ public class MessagesActivity extends Activity {
                 newMessage.put(DatabaseTables.Messages.MESSAGE_TEXT, messageText);
                 messages.add(newMessage);
                 adapter.notifyDataSetChanged();
-                if (ConversationsFragment.adapter != null)
+                if (ConversationsFragment.adapter != null) {
+                    //move this conversation to the top
+                    for (int i=0; i<ConversationsFragment.conversations.size(); i++) {
+                        if (ConversationsFragment.conversations.get(i).get(DatabaseTables.Conversations.USER_ID).equals(userID)) {
+                            HashMap<String, String> tempConversation = ConversationsFragment.conversations.get(i);
+                            //update the timestamp
+                            //tempConversation.put(DatabaseTables.Messages.TIMESTAMP, String.valueOf(timestamp));
+                            ConversationsFragment.conversations.remove(i);
+                            ConversationsFragment.conversations.add(0, tempConversation);
+                            break;
+                        }
+                    }
+
                     ConversationsFragment.adapter.notifyDataSetChanged();
+                }
                 editText.setText("");
                 editText.clearFocus();
                 //scrollMyListViewToBottom();

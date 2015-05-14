@@ -2,7 +2,6 @@ package com.example.matija_pc.carewell.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.matija_pc.carewell.LoadUserImages;
 import com.example.matija_pc.carewell.R;
-import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 import com.example.matija_pc.carewell.listeners.CallButtonListener;
 import com.example.matija_pc.carewell.listeners.DisplayUserProfileListener;
@@ -38,17 +37,11 @@ public class ContactsAdapter extends BaseAdapter {
         mContacts =contacts;
         mActivity = activity;
         distinctContacts = new ArrayList<>();
-        String query = "SELECT " + DatabaseTables.Contacts.USER_ID + " FROM " + DatabaseTables.Contacts.TABLE_NAME;
-        DatabaseOperations databaseOperations = new DatabaseOperations(mContext);
-        Cursor result = databaseOperations.select(query, null);
-        result.moveToFirst();
-        while (!result.isAfterLast()) {
-            UserImageLoader imageLoader = new UserImageLoader(result.getString(0), mContext);
-            distinctContacts.add(imageLoader);
-            result.moveToNext();
-        }
-        result.close();
+        //get user pictures
+        LoadUserImages loadUserImages = new LoadUserImages(distinctContacts, activity);
+        loadUserImages.execute();
     }
+
 
     public long getItemId(int position){
         return position;
@@ -93,8 +86,6 @@ public class ContactsAdapter extends BaseAdapter {
         contactsViewHolder.userInfo.setText(contactsHolder.firstName + " " + contactsHolder.lastName);
         contactsViewHolder.userInfo.setTag(contactsHolder);
 
-        /*contactsViewHolder.userImage.setTag(contactsHolder);
-        contactsViewHolder.userImage.setOnClickListener(new DisplayUserProfileListener(mActivity));*/
 
         boolean userImageExists = false;
         for (UserImageLoader iter : distinctContacts) {

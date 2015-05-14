@@ -11,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.matija_pc.carewell.LoadUserImages;
 import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
@@ -35,22 +36,9 @@ public class ConversationsAdapter extends BaseAdapter {
         mActivity = activity;
         mContext = activity.getApplicationContext();
         distinctUserImages = new ArrayList<UserImageLoader>();
-
-        String query =  "SELECT * FROM " + DatabaseTables.Contacts.TABLE_NAME + " JOIN " +
-                DatabaseTables.Conversations.TABLE_NAME + " ON " +
-                DatabaseTables.Conversations.USER_ID + "=" + DatabaseTables.Contacts.USER_ID;
-
-        //load images from different users
-        DatabaseOperations databaseOperations = new DatabaseOperations(mContext);
-        Cursor result = databaseOperations.select(query, null);
-        result.moveToFirst();
-        while (!result.isAfterLast()) {
-            String userID = result.getString(result.getColumnIndex(DatabaseTables.Contacts.USER_ID));
-            UserImageLoader imageLoader = new UserImageLoader(userID, mContext);
-            distinctUserImages.add(imageLoader);
-            result.moveToNext();
-        }
-        result.close();
+        //get user pictures
+        LoadUserImages loadUserImages = new LoadUserImages(distinctUserImages, activity);
+        loadUserImages.execute();
     }
 
     @Override

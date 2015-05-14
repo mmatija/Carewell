@@ -14,10 +14,15 @@ import com.example.matija_pc.carewell.database.DatabaseTables;
 public class UserImageLoader {
     public String userID;
     String imagePath;
-    Bitmap bitmap;
+    public Bitmap bitmap;
     Context mContext;
 
+    //if width and height aren't provided, load 80x80 icons because that is the size of picture thumbnail
     public UserImageLoader(String userID, Context context) {
+        this(userID, context, 80, 80);
+    }
+
+    public UserImageLoader(String userID, Context context, int width, int height) {
         mContext = context;
         this.userID = userID;
         imagePath="";
@@ -29,7 +34,7 @@ public class UserImageLoader {
         if(result.moveToFirst()) {
             imagePath = result.getString(0);
         }
-        bitmap = BitmapScaler.decodeSampledBitmap(imagePath, 90, 90);
+        bitmap = BitmapScaler.decodeSampledBitmap(imagePath, width, height);
         result.close();
     }
 }

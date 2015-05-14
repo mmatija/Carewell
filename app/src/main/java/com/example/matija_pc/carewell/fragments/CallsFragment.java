@@ -57,12 +57,6 @@ public class CallsFragment extends Fragment {
         getCallsFromDatabase.execute();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        //cancel task on tab change to prevent crashes when tabs are changed quickly
-        getCallsFromDatabase.cancel(true);
-    }
 
     private class GetCallsFromDatabase extends AsyncTask<Void, Void, Void> {
         ArrayList<HashMap<String, String>> tempCalls = new ArrayList<>();

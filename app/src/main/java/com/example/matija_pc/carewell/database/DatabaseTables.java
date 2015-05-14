@@ -38,6 +38,7 @@ public final class DatabaseTables {
     public static abstract class Conversations implements BaseColumns {
         public static final String TABLE_NAME = "Conversations";
         public static final String USER_ID = "userID";       //a person with whom the user talks
+        public static final String LAST_MESSAGE_TIMESTAMP = "lastMessageTimestamp"; //for quicker sorting conversations by last message date
     }
 
 
@@ -70,7 +71,8 @@ public final class DatabaseTables {
     public static final String CREATE_TABLE_CONVERSATIONS =
             "CREATE TABLE " + Conversations.TABLE_NAME + " ( " +
             Conversations._ID + " INTEGER PRIMARY KEY, " +
-            Conversations.USER_ID + " TEXT NOT NULL " + ")";
+            Conversations.USER_ID + " TEXT NOT NULL, " +
+            Conversations.LAST_MESSAGE_TIMESTAMP + " INTEGER NOT NULL " + ")";
 
     public static final String DELETE_TABLE_CONTACTS =
             "DROP TABLE IF EXISTS " + Contacts.TABLE_NAME;

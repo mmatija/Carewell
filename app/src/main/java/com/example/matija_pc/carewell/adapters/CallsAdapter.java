@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.matija_pc.carewell.LoadUserImages;
 import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
@@ -42,18 +43,9 @@ public class CallsAdapter extends BaseAdapter {
         mCalls = calls;
         mActivity = activity;
         distinctContacts = new ArrayList<>();
-        DatabaseOperations databaseOperations = new DatabaseOperations(mContext);
-
-        //select all distinct persons called and get their pictures
-        Cursor result = databaseOperations.select(selectDistinct, null);
-        result.moveToFirst();
-        while (!result.isAfterLast()) {
-            String userID = result.getString(0);
-            UserImageLoader helper = new UserImageLoader(userID, mContext);
-            distinctContacts.add(helper);
-            result.moveToNext();
-        }
-        result.close();
+        //get picture from all users
+        LoadUserImages loadUserImages = new LoadUserImages(distinctContacts, activity);
+        loadUserImages.execute();
     }
 
     @Override
@@ -86,7 +78,6 @@ public class CallsAdapter extends BaseAdapter {
             callsViewHolder.callTime = (TextView) v.findViewById(R.id.call_time);
             callsViewHolder.videoCallButton = (ImageButton) v.findViewById(R.id.video_call_button);
             callsViewHolder.audioCallButton = (ImageButton) v.findViewById(R.id.audio_call_button);
-            callsViewHolder.relativeLayout = (RelativeLayout) v.findViewById(R.id.call_log_relative_layout);
             v.setTag(callsViewHolder);
         }
         else callsViewHolder = (CallsViewHolder) v.getTag();
@@ -100,11 +91,6 @@ public class CallsAdapter extends BaseAdapter {
         callsHolder.callDirection = mCalls.get(position).get(DatabaseTables.CallsLog.CALL_DIRECTION);
         callsHolder.callType = mCalls.get(position).get(DatabaseTables.CallsLog.CALL_TYPE);
 
-        /*String rawQuery =   "SELECT * FROM " + DatabaseTables.CallsLog.TABLE_NAME + " JOIN " +
-                                    DatabaseTables.Contacts.TABLE_NAME + " ON " + DatabaseTables.Contacts.USER_ID +
-                                    "=" + DatabaseTables.CallsLog.PERSON_CALLED + " WHERE " + DatabaseTables.CallsLog.PERSON_CALLED +
-                                    "=?";*/
-
         String rawQuery = "SELECT * FROM " + DatabaseTables.Contacts.TABLE_NAME + " WHERE " +
                             DatabaseTables.Contacts.USER_ID + "=?";
 
@@ -112,12 +98,20 @@ public class CallsAdapter extends BaseAdapter {
         DatabaseOperations databaseOperations = new DatabaseOperations(mContext);
         Cursor result = databaseOperations.select(rawQuery, callsHolder.personCalled);
 
-        callsViewHolder.relativeLayout.setLongClickable(true);
+        RelativeLayout relativeLayout = (RelativeLayout) v.findViewById(R.id.call_log_relative_layout);
+        relativeLayout.setLongClickable(true);
+        //callsViewHolder.relativeLayout.setLongClickable(true);
 
         //if there are no rows, i.e. user is deleted
         if(!result.moveToFirst()) {
             callsViewHolder.userInfo.setText("Unknown");
             callsViewHolder.userImage.setImageResource(R.drawable.generic_picture);
+            relativeLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, "This user does not exist", Toast.LENGTH_SHORT).show();
+                }
+            });
             for (int i=0; i<distinctContacts.size(); i++)
                 if (distinctContacts.get(i).userID.equals(callsHolder.personCalled)) {
                     distinctContacts.remove(i);
@@ -153,8 +147,11 @@ public class CallsAdapter extends BaseAdapter {
             contactsHolder.userID = result.getString(result.getColumnIndex(DatabaseTables.Contacts.USER_ID));
 
 
-            callsViewHolder.relativeLayout.setTag(contactsHolder);
-            callsViewHolder.relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));
+            /*callsViewHolder.relativeLayout.setTag(contactsHolder);
+            callsViewHolder.relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));*/
+
+            relativeLayout.setTag(contactsHolder);
+            relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));
 
             CallButtonListener.CallHelper videoCallHelper = new CallButtonListener.CallHelper();
             videoCallHelper.userID = callsHolder.personCalled;
@@ -228,7 +225,7 @@ public class CallsAdapter extends BaseAdapter {
         return v;
     }
 
-
+    //format duration like hh:mm:ss
     String calculateCallDuration(long milliseconds) {
         long elapsedSeconds = milliseconds / 1000;
         long elapsedHours = (long) elapsedSeconds/3600;
@@ -256,6 +253,7 @@ public class CallsAdapter extends BaseAdapter {
         return duration;
     }
 
+    //determine which icon to display depending on call direction
     private void setCallDirectionIcon (ImageView iv, String callDirection) {
         switch (callDirection) {
             case "missed":
@@ -270,6 +268,7 @@ public class CallsAdapter extends BaseAdapter {
         }
     }
 
+    //determine what icon to display depending on call type
     private void setCallType (ImageView iv, String callType) {
         if (callType.equals("video"))
             iv.setImageResource(R.drawable.video_call_icon);
@@ -277,8 +276,8 @@ public class CallsAdapter extends BaseAdapter {
             iv.setImageResource(R.drawable.audio_call_icon);
     }
 
+    //view holder class so that findViewById gets call only once for each view
     private class CallsViewHolder {
-        public RelativeLayout relativeLayout;
         public ImageView userImage;
         public TextView userInfo;
         public ImageView callDirection;

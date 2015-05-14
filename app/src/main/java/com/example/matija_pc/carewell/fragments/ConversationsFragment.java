@@ -62,12 +62,6 @@ public class ConversationsFragment extends Fragment {
         getConversationsFromDatabase.execute();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        //cancel task on tab change to prevent crashes when tabs are changed quickly
-        getConversationsFromDatabase.cancel(true);
-    }
 
     public void onCreateContextMenu (ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
         //super.onCreateContextMenu(menu, view, menuInfo);
@@ -103,13 +97,17 @@ public class ConversationsFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
-            Cursor result = databaseOperations.select("SELECT * FROM " + DatabaseTables.Conversations.TABLE_NAME, null);
+            String query = "SELECT * FROM " + DatabaseTables.Conversations.TABLE_NAME + " ORDER BY " +
+                            DatabaseTables.Conversations.LAST_MESSAGE_TIMESTAMP + " DESC";
+
+            Cursor result = databaseOperations.select(query, null);
+
             result.moveToFirst();
             while (!result.isAfterLast()) {
+                String userID = result.getString(result.getColumnIndex(DatabaseTables.Conversations.USER_ID));
                 HashMap<String, String> conversation = new HashMap<>();
-                conversation.put(DatabaseTables.Conversations.USER_ID, result.getString(result.getColumnIndex(DatabaseTables.Conversations.USER_ID)));
+                conversation.put(DatabaseTables.Conversations.USER_ID, userID);
                 conversations.add(conversation);
-                //tempConversations.add(conversation);
                 result.moveToNext();
             }
             result.close();
@@ -117,10 +115,10 @@ public class ConversationsFragment extends Fragment {
         }
 
         protected void onPostExecute(Void param) {
-            //conversations = tempConversations;
             adapter.notifyDataSetChanged();
         }
     }
+
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater);
