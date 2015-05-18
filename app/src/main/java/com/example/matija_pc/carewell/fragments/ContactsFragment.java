@@ -61,47 +61,12 @@ public class ContactsFragment extends Fragment {
         getContactsFromDatabase.execute();
     }
 
-
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.contacts_fragment, container, false);
         listView = (ListView) view.findViewById(R.id.user_list);
         return view;
     }
 
-    public void insertTestData() {
-
-        ContentValues person1 = new ContentValues();
-        ContentValues person2 = new ContentValues();
-        ContentValues person3 = new ContentValues();
-        ContentValues person4 = new ContentValues();
-
-        person1.put(DatabaseTables.Contacts.USER_ID, "mm");
-        person1.put(DatabaseTables.Contacts.FIRST_NAME, "Matija");
-        person1.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
-        person1.put(DatabaseTables.Contacts.IMAGE_PATH, "");
-
-
-        person2.put(DatabaseTables.Contacts.USER_ID, "jm");
-        person2.put(DatabaseTables.Contacts.FIRST_NAME, "Juraj");
-        person2.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
-        person2.put(DatabaseTables.Contacts.IMAGE_PATH, "");
-
-        person3.put(DatabaseTables.Contacts.USER_ID, "tm");
-        person3.put(DatabaseTables.Contacts.FIRST_NAME, "Tereza");
-        person3.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
-        person3.put(DatabaseTables.Contacts.IMAGE_PATH, "");
-
-        person4.put(DatabaseTables.Contacts.USER_ID, "zm");
-        person4.put(DatabaseTables.Contacts.FIRST_NAME, "Zvonimir");
-        person4.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
-        person4.put(DatabaseTables.Contacts.IMAGE_PATH, "");
-
-        DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
-        databaseOperations.insert(DatabaseTables.Contacts.TABLE_NAME, person1);
-        databaseOperations.insert(DatabaseTables.Contacts.TABLE_NAME, person2);
-        databaseOperations.insert(DatabaseTables.Contacts.TABLE_NAME, person3);
-        databaseOperations.insert(DatabaseTables.Contacts.TABLE_NAME, person4);
-    }
 
     public class GetContactsFromDatabase extends AsyncTask<Void, Void, Void> {
         ArrayList<HashMap<String, String>> tempContacts = new ArrayList<>();

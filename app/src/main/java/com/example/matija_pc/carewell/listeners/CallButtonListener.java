@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.view.View;
 
-import com.example.matija_pc.carewell.CallActivity;
+import com.example.matija_pc.carewell.activities.CallActivity;
 import com.example.matija_pc.carewell.adapters.CallsAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;

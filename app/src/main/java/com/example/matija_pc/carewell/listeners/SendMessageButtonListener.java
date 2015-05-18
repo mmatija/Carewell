@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.view.View;
 
-import com.example.matija_pc.carewell.ComposeMessageActivity;
-import com.example.matija_pc.carewell.MainActivity;
-import com.example.matija_pc.carewell.MessagesActivity;
+import com.example.matija_pc.carewell.activities.ComposeMessageActivity;
+import com.example.matija_pc.carewell.activities.MainActivity;
+import com.example.matija_pc.carewell.activities.MessagesActivity;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 

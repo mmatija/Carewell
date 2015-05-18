@@ -1,4 +1,4 @@
-package com.example.matija_pc.carewell;
+package com.example.matija_pc.carewell.activities;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.adapters.MessagesAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;

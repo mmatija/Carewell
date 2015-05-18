@@ -17,10 +17,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.matija_pc.carewell.ComposeMessageActivity;
-import com.example.matija_pc.carewell.MainActivity;
-import com.example.matija_pc.carewell.MessagesActivity;
 import com.example.matija_pc.carewell.R;
+import com.example.matija_pc.carewell.activities.ComposeMessageActivity;
+import com.example.matija_pc.carewell.activities.MainActivity;
+import com.example.matija_pc.carewell.activities.MessagesActivity;
 import com.example.matija_pc.carewell.adapters.ConversationsAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;

@@ -1,4 +1,4 @@
-package com.example.matija_pc.carewell;
+package com.example.matija_pc.carewell.activities;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.adapters.SearchResultAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;

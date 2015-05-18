@@ -1,4 +1,4 @@
-package com.example.matija_pc.carewell;
+package com.example.matija_pc.carewell.activities;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebView;
 
+import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.listeners.CallButtonListener;
 
 /**

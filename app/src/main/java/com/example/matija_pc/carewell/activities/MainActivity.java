@@ -1,4 +1,4 @@
-package com.example.matija_pc.carewell;
+package com.example.matija_pc.carewell.activities;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.adapters.TabsPagerAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;

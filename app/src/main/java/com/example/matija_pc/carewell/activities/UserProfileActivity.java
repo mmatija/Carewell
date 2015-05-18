@@ -1,4 +1,4 @@
-package com.example.matija_pc.carewell;
+package com.example.matija_pc.carewell.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -21,6 +21,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.matija_pc.carewell.BitmapScaler;
+import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.adapters.CallsAdapter;
 import com.example.matija_pc.carewell.adapters.ContactsAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;

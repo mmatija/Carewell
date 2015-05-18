@@ -15,7 +15,7 @@
         android:hardwareAccelerated="true">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,18 +23,18 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.example.matija_pc.carewell.UserProfileActivity"
+        <activity android:name=".activities.UserProfileActivity"
             android:label="@string/title_activity_user_profile"
-            android:parentActivityName="com.example.matija_pc.carewell.MainActivity">
+            android:parentActivityName=".activities.MainActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.matija_pc.carewell.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
 
-        <activity android:name=".SearchableActivity"
+        <activity android:name=".activities.SearchableActivity"
             android:label="@string/title_activity_searchable">
         </activity>
 
-        <activity android:name=".ComposeMessageActivity"
+        <activity android:name=".activities.ComposeMessageActivity"
             android:label="@string/title_activity_compose_message"
             android:windowSoftInputMode="adjustResize"
             android:launchMode="singleTop">
@@ -49,11 +49,11 @@
                 android:value=".ComposeMessageActivity"/>
         </activity>
 
-        <activity android:name=".MessagesActivity"
+        <activity android:name=".activities.MessagesActivity"
             android:label="@string/title_activity_messages"
             android:windowSoftInputMode="adjustResize"/>
 
-        <activity android:name=".CallActivity"
+        <activity android:name=".activities.CallActivity"
             android:label="@string/title_activity_call" />
 
     </application>

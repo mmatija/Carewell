@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.view.View;
 
-import com.example.matija_pc.carewell.MainActivity;
-import com.example.matija_pc.carewell.UserProfileActivity;
+import com.example.matija_pc.carewell.activities.MainActivity;
+import com.example.matija_pc.carewell.activities.UserProfileActivity;
 import com.example.matija_pc.carewell.adapters.ContactsHolderClass;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;

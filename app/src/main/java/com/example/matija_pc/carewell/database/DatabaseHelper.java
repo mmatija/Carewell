@@ -1,5 +1,6 @@
 package com.example.matija_pc.carewell.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -9,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 9;
     public static final String DATABASE_NAME = "CarewellDatabase.db";
 
     public DatabaseHelper(Context context) {
@@ -23,6 +24,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(DatabaseTables.CREATE_TABLE_CALLS_LOG);
         db.execSQL(DatabaseTables.CREATE_TABLE_MESSAGES);
         db.execSQL(DatabaseTables.CREATE_TABLE_CONVERSATIONS);
+        insertTestData(db);
+
     }
 
     @Override
@@ -32,5 +35,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(DatabaseTables.DELETE_TABLE_CONTACTS);
         db.execSQL(DatabaseTables.DELETE_TABLE_CONVERSATIONS);
         onCreate(db);
+    }
+
+    public void insertTestData(SQLiteDatabase db) {
+
+        ContentValues person1 = new ContentValues();
+        ContentValues person2 = new ContentValues();
+        ContentValues person3 = new ContentValues();
+        ContentValues person4 = new ContentValues();
+
+        person1.put(DatabaseTables.Contacts.USER_ID, "mm");
+        person1.put(DatabaseTables.Contacts.FIRST_NAME, "Matija");
+        person1.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
+        person1.put(DatabaseTables.Contacts.IMAGE_PATH, "");
+
+
+        person2.put(DatabaseTables.Contacts.USER_ID, "jm");
+        person2.put(DatabaseTables.Contacts.FIRST_NAME, "Juraj");
+        person2.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
+        person2.put(DatabaseTables.Contacts.IMAGE_PATH, "");
+
+        person3.put(DatabaseTables.Contacts.USER_ID, "tm");
+        person3.put(DatabaseTables.Contacts.FIRST_NAME, "Tereza");
+        person3.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
+        person3.put(DatabaseTables.Contacts.IMAGE_PATH, "");
+
+        person4.put(DatabaseTables.Contacts.USER_ID, "zm");
+        person4.put(DatabaseTables.Contacts.FIRST_NAME, "Zvonimir");
+        person4.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
+        person4.put(DatabaseTables.Contacts.IMAGE_PATH, "");
+
+        db.insert(DatabaseTables.Contacts.TABLE_NAME, null, person1);
+        db.insert(DatabaseTables.Contacts.TABLE_NAME, null, person2);
+        db.insert(DatabaseTables.Contacts.TABLE_NAME, null, person3);
+        db.insert(DatabaseTables.Contacts.TABLE_NAME, null, person4);
     }
 }
