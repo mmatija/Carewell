@@ -1,17 +1,18 @@
 package com.example.matija_pc.carewell.listeners;
 
+import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.view.View;
 
+import com.example.matija_pc.carewell.CallActivity;
 import com.example.matija_pc.carewell.adapters.CallsAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 import com.example.matija_pc.carewell.fragments.CallsFragment;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -19,49 +20,47 @@ import java.util.Random;
  * Created by Matija-PC on 13.4.2015..
  */
 public class CallButtonListener implements View.OnClickListener {
-    private static Context mContext;
+    public static Activity mActivity;
+    private static int CALL_ACTIVITY_CODE = 100;
     public CallsAdapter mAdapter;
     public ArrayList<HashMap<String, String>> mCalls;
+    private static CallHelper callHelper;
+    private static long callStart;
 
-    public CallButtonListener(Context context)
+    public CallButtonListener(Activity activity)
     {
-        mContext = context;
+        mActivity = activity;
     }
 
     @Override
     public void onClick(View v) {
-        //String[] possibleCallers = {"mm", "jm", "tm"};
-        String[] possibleCallDirections = {"incoming", "outgoing", "missed"};
+        callHelper = (CallHelper) v.getTag();
+        callStart = System.currentTimeMillis();
+        Intent intent = new Intent(mActivity, CallActivity.class);
+        mActivity.startActivityForResult(intent, CALL_ACTIVITY_CODE);
+    }
 
-        CallHelper callHelper = (CallHelper) v.getTag();
-        String personCalled = callHelper.userID;
-        String callType = callHelper.callType;
-        //Toast.makeText(mContext, callType, Toast.LENGTH_SHORT).show();
+    public static void addCallToAdapter (long callFinish) {
+
         ContentValues values = new ContentValues();
-        Calendar calendar = Calendar.getInstance();
-        long callStart = calendar.getTimeInMillis();
         Random r = new Random();
-        long callFinish = callStart + r.nextInt(20001) + 1000;
         long callDuration = callFinish - callStart;
-        String callDirection = possibleCallDirections[r.nextInt(3)];
+        String callDirection = "outgoing";
         if (callDirection.equals("missed")) callDuration = 0;
 
-        values.put(DatabaseTables.CallsLog.PERSON_CALLED, personCalled);
+        values.put(DatabaseTables.CallsLog.PERSON_CALLED, callHelper.userID);
         values.put(DatabaseTables.CallsLog.CALL_START, callStart);
         values.put(DatabaseTables.CallsLog.CALL_FINISH, callFinish);
         values.put(DatabaseTables.CallsLog.CALL_DURATION, callDuration);
         values.put(DatabaseTables.CallsLog.CALL_DIRECTION, callDirection);
-        values.put(DatabaseTables.CallsLog.CALL_TYPE, callType);
+        values.put(DatabaseTables.CallsLog.CALL_TYPE, callHelper.callType);
 
         //insert call log into database
-        DatabaseOperations databaseOperations = new DatabaseOperations(mContext);
+        DatabaseOperations databaseOperations = new DatabaseOperations(mActivity);
         databaseOperations.insert(DatabaseTables.CallsLog.TABLE_NAME, values);
-        addCallToAdapter(values);
 
-    }
 
-    public static void addCallToAdapter (ContentValues values) {
-        DatabaseOperations databaseOperations = new DatabaseOperations(mContext);
+        //DatabaseOperations databaseOperations = new DatabaseOperations(mActivity);
         String query = "SELECT " + DatabaseTables.CallsLog._ID + " FROM " + DatabaseTables.CallsLog.TABLE_NAME +
                         " WHERE " + DatabaseTables.CallsLog.CALL_DIRECTION + "=?" + " AND " +
                         DatabaseTables.CallsLog.CALL_START + "=?" + " LIMIT 1";
@@ -91,4 +90,5 @@ public class CallButtonListener implements View.OnClickListener {
             callType = "";
         }
     }
+
 }

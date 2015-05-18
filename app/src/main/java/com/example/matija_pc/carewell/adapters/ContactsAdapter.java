@@ -34,7 +34,7 @@ public class ContactsAdapter extends BaseAdapter {
 
     public ContactsAdapter(Activity activity, ArrayList<HashMap<String, String>> contacts){
         mContext= activity.getApplicationContext();
-        mContacts =contacts;
+        mContacts = contacts;
         mActivity = activity;
         distinctContacts = new ArrayList<>();
         //get user pictures
@@ -125,8 +125,8 @@ public class ContactsAdapter extends BaseAdapter {
 
         contactsViewHolder.videoCallButton.setTag(videCallHelper);
         contactsViewHolder.audioCallButton.setTag(audioCallHelper);
-        contactsViewHolder.videoCallButton.setOnClickListener(new CallButtonListener(mContext));
-        contactsViewHolder.audioCallButton.setOnClickListener(new CallButtonListener(mContext));
+        contactsViewHolder.videoCallButton.setOnClickListener(new CallButtonListener(mActivity));
+        contactsViewHolder.audioCallButton.setOnClickListener(new CallButtonListener(mActivity));
         return v;
     }
 
