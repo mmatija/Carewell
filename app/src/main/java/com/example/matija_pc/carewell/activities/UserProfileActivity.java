@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import com.example.matija_pc.carewell.BitmapScaler;
 import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.adapters.CallsAdapter;
 import com.example.matija_pc.carewell.adapters.ContactsAdapter;
+import com.example.matija_pc.carewell.adapters.UserImageLoader;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 import com.example.matija_pc.carewell.fragments.CallsFragment;
@@ -53,15 +55,8 @@ public class UserProfileActivity extends Activity {
         ImageView userImage = (ImageView) findViewById(R.id.user_picture);
         String currentImagePath = intent.getStringExtra(MainActivity.IMAGE_PATH);
 
-        //load user image using predefined dimension (1024x1024)
-        Bitmap bitmap = BitmapScaler.decodeSampledBitmap(currentImagePath, 0, 0);
-        //if there is already a picture defined for this contact, display it, else, display generic picture
-        if (bitmap!=null) {
-            userImage.setImageBitmap(bitmap);
-            userImage.setBackgroundColor(0x0);
-        } else {
-            userImage.setImageResource(R.drawable.generic_picture);
-        }
+        //load user image asynchronously
+        new LoadSingleImage().execute(userImage);
 
         //define listeners for buttons and set tags
         String userID = intent.getStringExtra(MainActivity.USER_ID);
@@ -86,6 +81,27 @@ public class UserProfileActivity extends Activity {
         sendMessageLayout.setOnClickListener(new SendMessageButtonListener(this));
         sendMessageButton.setOnClickListener(new SendMessageButtonListener(this));
         userImage.setOnClickListener(changeUserImage);
+    }
+
+    private class LoadSingleImage extends AsyncTask<ImageView, Void, Bitmap> {
+        ImageView imageView;
+        @Override
+        protected Bitmap doInBackground(ImageView... params) {
+            imageView = params[0];
+            String userID = intent.getStringExtra(MainActivity.USER_ID);
+            UserImageLoader imageLoader = new UserImageLoader(userID, getApplicationContext(), 1024, 1024);
+            return imageLoader.bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+                imageView.setBackgroundColor(0x0);
+            }
+            else
+                imageView.setImageResource(R.drawable.generic_picture);
+        }
     }
 
     //listener for changing user image

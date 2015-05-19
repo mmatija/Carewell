@@ -1,7 +1,6 @@
 package com.example.matija_pc.carewell.adapters;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.matija_pc.carewell.BitmapScaler;
+import com.example.matija_pc.carewell.LoadUserImages;
 import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 
@@ -23,11 +22,14 @@ import java.util.HashMap;
 public class SearchResultAdapter extends BaseAdapter {
 
     ArrayList<HashMap<String, String>> mContacts;
+    ArrayList<UserImageLoader> userPictures;
     Activity mActivity;
 
     public SearchResultAdapter(Activity activity, ArrayList<HashMap<String, String>> contacts) {
         mContacts = contacts;
         mActivity = activity;
+        userPictures = new ArrayList<>();
+        new LoadUserImages(userPictures, mActivity.getApplicationContext()).execute();
     }
 
     @Override
@@ -50,17 +52,21 @@ public class SearchResultAdapter extends BaseAdapter {
         View view = convertView;
         if (view == null)
             view = LayoutInflater.from(mActivity.getApplicationContext()).inflate(R.layout.search_result, null);
-
+        String userID = mContacts.get(position).get(DatabaseTables.Contacts.USER_ID);
         ImageView userImage = (ImageView) view.findViewById(R.id.user_picture_thumbnail);
         TextView userInfo = (TextView) view.findViewById(R.id.user_info);
-        Bitmap bitmap = BitmapScaler.decodeSampledBitmap(mContacts.get(position).get(DatabaseTables.Contacts.IMAGE_PATH), 80, 80);
-        if (bitmap != null) {
-            userImage.setImageBitmap(bitmap);
-            userImage.setBackgroundColor(0x0);
-        }
-        else {
-            userImage.setImageResource(R.drawable.generic_picture);
-            userImage.setBackgroundColor(Color.parseColor("#ff9e9e9e"));
+        for (UserImageLoader iter : userPictures) {
+            if (iter.userID.equals(userID)) {
+                if (iter.bitmap != null) {
+                    userImage.setImageBitmap(iter.bitmap);
+                    userImage.setBackgroundColor(0x0);
+                }
+                else {
+                    userImage.setImageResource(R.drawable.generic_picture);
+                    userImage.setBackgroundColor(Color.parseColor("#ff9e9e9e"));
+                }
+                break;
+            }
         }
 
         String firstName = mContacts.get(position).get(DatabaseTables.Contacts.FIRST_NAME);
