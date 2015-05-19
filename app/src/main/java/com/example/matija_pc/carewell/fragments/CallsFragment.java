@@ -130,7 +130,7 @@ public class CallsFragment extends Fragment {
     private void deleteCallLog(String _id) {
         //delete log from database
         DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
-        databaseOperations.delete(DatabaseTables.CallsLog.TABLE_NAME, DatabaseTables.CallsLog._ID, _id);
+        databaseOperations.delete(DatabaseTables.CallsLog.TABLE_NAME, DatabaseTables.CallsLog._ID + "=?", _id);
 
         for (int i=0; i<calls.size(); i++) {
             if (calls.get(i).get(DatabaseTables.CallsLog._ID).equals(_id)) {

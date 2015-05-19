@@ -139,7 +139,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     public void deleteContact (String userID) {
         DatabaseOperations databaseOperations = new DatabaseOperations(getApplicationContext());
-        databaseOperations.delete(DatabaseTables.Contacts.TABLE_NAME, DatabaseTables.Contacts.USER_ID, userID);
+        databaseOperations.delete(DatabaseTables.Contacts.TABLE_NAME, DatabaseTables.Contacts.USER_ID + "=?", userID);
         for (int i=0; i< ContactsFragment.contacts.size(); i++){
             HashMap<String, String> temp = ContactsFragment.contacts.get(i);
             if (temp.get(DatabaseTables.Contacts.USER_ID).equals(userID)) {

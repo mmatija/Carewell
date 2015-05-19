@@ -153,8 +153,14 @@ public class ConversationsFragment extends Fragment {
 
     public void deleteConversations(String where, String value) {
         DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
-        databaseOperations.delete(DatabaseTables.Conversations.TABLE_NAME, where, value);
-        databaseOperations.delete(DatabaseTables.Messages.TABLE_NAME, where, value);
+        if (where == null) {
+            databaseOperations.delete(DatabaseTables.Conversations.TABLE_NAME, null, null);
+            databaseOperations.delete(DatabaseTables.Messages.TABLE_NAME, null, null);
+        }
+        else {
+            databaseOperations.delete(DatabaseTables.Conversations.TABLE_NAME, where + "=?", value);
+            databaseOperations.delete(DatabaseTables.Messages.TABLE_NAME, where + "=?", value);
+        }
         if (where == null && value == null) {
             conversations.clear();
         }

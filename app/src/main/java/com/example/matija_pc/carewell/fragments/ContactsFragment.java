@@ -105,7 +105,7 @@ public class ContactsFragment extends Fragment {
 
     public void deleteContact (String userID) {
         DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
-        databaseOperations.delete(DatabaseTables.Contacts.TABLE_NAME, DatabaseTables.Contacts.USER_ID, userID);
+        databaseOperations.delete(DatabaseTables.Contacts.TABLE_NAME, DatabaseTables.Contacts.USER_ID + "=?", userID);
         for (int i=0; i< contacts.size(); i++){
             HashMap<String, String> temp = contacts.get(i);
             if (temp.get(DatabaseTables.Contacts.USER_ID).equals(userID)) {

@@ -26,9 +26,8 @@ public class DatabaseOperations {
 
     public void delete (String tableName, String where, String... args) {
         if (where == null) writeDatabase.delete(tableName, null, null);
-        writeDatabase.delete(tableName, where+"=?", args );
+        writeDatabase.delete(tableName, where, args);
     }
-
 
     public void update (String tableName, ContentValues contentValues, String where, String... value) {
         writeDatabase.update(tableName, contentValues, where+"=?", value);

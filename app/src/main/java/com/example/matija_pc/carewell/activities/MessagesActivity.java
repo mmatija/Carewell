@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -36,6 +40,7 @@ public class MessagesActivity extends Activity {
     EditText editText;
     ListView listView;
     boolean userExists = false;
+    private final int MESSAGES_CONTEXT_MENU_GROUP = 3;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +84,29 @@ public class MessagesActivity extends Activity {
         getMessages();
         //scroll to the last message
         listView.setSelection(adapter.getCount() - 1);
+        listView.setLongClickable(true);
+        registerForContextMenu(listView);
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add(MESSAGES_CONTEXT_MENU_GROUP, v.getId(), 0, "Delete");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (item.getGroupId() != MESSAGES_CONTEXT_MENU_GROUP) return  super.onContextItemSelected(item);
+        AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        if (item.getTitle().equals("Delete")) {
+            String timestamp = messages.get(adapterContextMenuInfo.position).get(DatabaseTables.Messages.TIMESTAMP);
+            String messageDirection = messages.get(adapterContextMenuInfo.position).get(DatabaseTables.Messages.MESSAGE_DIRECTION);
+            new DeleteSingleMessage(timestamp, messageDirection).execute();
+            return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
 
     private void getMessages() {
         messages.clear();
@@ -104,6 +131,61 @@ public class MessagesActivity extends Activity {
         adapter.notifyDataSetChanged();
     }
 
+
+    private class DeleteSingleMessage extends AsyncTask<Void, Void, Void> {
+
+        String mTimestamp;
+        String mMessageDirection;
+
+        public DeleteSingleMessage(String timestamp, String messageDirection) {
+            mTimestamp = timestamp;
+            mMessageDirection = messageDirection;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            DatabaseOperations databaseOperations = new DatabaseOperations(getApplicationContext());
+            String whereClause = DatabaseTables.Messages.USER_ID + "=?" + " AND " +
+                    DatabaseTables.Messages.TIMESTAMP + "=?" + " AND " +
+                    DatabaseTables.Messages.MESSAGE_DIRECTION + "=?";
+
+            databaseOperations.delete(DatabaseTables.Messages.TABLE_NAME, whereClause, userID, mTimestamp, mMessageDirection);
+
+            for (int i = 0; i < messages.size(); i++) {
+                HashMap<String, String> temp = messages.get(i);
+                if (temp.get(DatabaseTables.Messages.USER_ID).equals(userID) && temp.get(DatabaseTables.Messages.TIMESTAMP).equals(mTimestamp) && temp.get(DatabaseTables.Messages.MESSAGE_DIRECTION).equals(mMessageDirection)) {
+                    messages.remove(i);
+                    break;
+                }
+            }
+
+            //check if there are any messages exchanged with this user left, and delete entire conversation if there aren't
+            String query = "SELECT COUNT(" + DatabaseTables.Messages.USER_ID + ")" + " FROM " +
+                    DatabaseTables.Messages.TABLE_NAME + " WHERE " + DatabaseTables.Messages.USER_ID + "=?";
+            Cursor result = databaseOperations.select(query, userID);
+            result.moveToFirst();
+            if (result.getInt(0) == 0) {
+                //no more messages with this user, delete conversation
+                databaseOperations.delete(DatabaseTables.Conversations.TABLE_NAME, DatabaseTables.Conversations.USER_ID + "=?", userID);
+                for (int i = 0; i < ConversationsFragment.conversations.size(); i++) {
+                    HashMap<String, String> temp = ConversationsFragment.conversations.get(i);
+                    if (temp.get(DatabaseTables.Conversations.USER_ID).equals(userID)) {
+                        ConversationsFragment.conversations.remove(i);
+                        break;
+                    }
+                }
+            }
+            result.close();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            adapter.notifyDataSetChanged();
+            ConversationsFragment.adapter.notifyDataSetChanged();
+        }
+    }
+
     View.OnClickListener sendMessageButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -116,7 +198,7 @@ public class MessagesActivity extends Activity {
                 DatabaseOperations databaseOperations = new DatabaseOperations(getApplicationContext());
                 Date date = new Date();
                 long timestamp = date.getTime();
-                String messageDirection = getResources().getString(R.string.sent);
+                String messageDirection = "sent";
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(DatabaseTables.Messages.USER_ID, userID);
                 contentValues.put(DatabaseTables.Messages.TIMESTAMP, timestamp);
@@ -138,6 +220,24 @@ public class MessagesActivity extends Activity {
                 messages.add(newMessage);
                 adapter.notifyDataSetChanged();
                 if (ConversationsFragment.adapter != null) {
+
+                    //if the conversation doesn't exist, create it
+                    String query = "SELECT * FROM " + DatabaseTables.Conversations.TABLE_NAME + " WHERE " +
+                                    DatabaseTables.Conversations.USER_ID + "=?";
+                    Cursor result = databaseOperations.select(query, userID);
+                    if (!result.moveToFirst()) {
+                        ContentValues cv = new ContentValues();
+                        cv.put(DatabaseTables.Conversations.USER_ID, userID);
+                        cv.put(DatabaseTables.Conversations.LAST_MESSAGE_TIMESTAMP, String.valueOf(timestamp));
+                        databaseOperations.insert(DatabaseTables.Conversations.TABLE_NAME, cv);
+                        HashMap<String, String> temp = new HashMap<>();
+                        temp.put(DatabaseTables.Conversations.USER_ID, userID);
+                        temp.put(DatabaseTables.Conversations.LAST_MESSAGE_TIMESTAMP, String.valueOf(timestamp));
+                        ConversationsFragment.conversations.add(temp);
+                        //ConversationsFragment.adapter.notifyDataSetChanged();
+                    }
+                    else result.close();
+
                     //move this conversation to the top
                     for (int i=0; i<ConversationsFragment.conversations.size(); i++) {
                         if (ConversationsFragment.conversations.get(i).get(DatabaseTables.Conversations.USER_ID).equals(userID)) {
@@ -156,7 +256,7 @@ public class MessagesActivity extends Activity {
                 editText.clearFocus();
                 //scrollMyListViewToBottom();
                 listView.setSelection(adapter.getCount() - 1);
-
+                Toast.makeText(getApplicationContext(), "Message sent", Toast.LENGTH_SHORT).show();
             }
 
         }

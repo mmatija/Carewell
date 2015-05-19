@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 9;
+    public static final int DATABASE_VERSION = 14;
     public static final String DATABASE_NAME = "CarewellDatabase.db";
 
     public DatabaseHelper(Context context) {
