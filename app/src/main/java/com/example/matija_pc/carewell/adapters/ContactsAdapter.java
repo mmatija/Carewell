@@ -83,7 +83,10 @@ public class ContactsAdapter extends BaseAdapter {
         contactsViewHolder.relativeLayout.setTag(contactsHolder);
         contactsViewHolder.relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));
 
-        contactsViewHolder.userInfo.setText(contactsHolder.firstName + " " + contactsHolder.lastName);
+        if (contactsHolder.firstName.equals("") && contactsHolder.lastName.equals(""))
+            contactsViewHolder.userInfo.setText(contactsHolder.userID);
+        else
+            contactsViewHolder.userInfo.setText(contactsHolder.firstName + " " + contactsHolder.lastName);
         contactsViewHolder.userInfo.setTag(contactsHolder);
 
 

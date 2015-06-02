@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 14;
+    public static final int DATABASE_VERSION = 15;
     public static final String DATABASE_NAME = "CarewellDatabase.db";
 
     public DatabaseHelper(Context context) {
@@ -44,23 +44,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues person3 = new ContentValues();
         ContentValues person4 = new ContentValues();
 
-        person1.put(DatabaseTables.Contacts.USER_ID, "mm");
+        person1.put(DatabaseTables.Contacts.USER_ID, 1);
         person1.put(DatabaseTables.Contacts.FIRST_NAME, "Matija");
         person1.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
         person1.put(DatabaseTables.Contacts.IMAGE_PATH, "");
 
 
-        person2.put(DatabaseTables.Contacts.USER_ID, "jm");
+        person2.put(DatabaseTables.Contacts.USER_ID, 2);
         person2.put(DatabaseTables.Contacts.FIRST_NAME, "Juraj");
         person2.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
         person2.put(DatabaseTables.Contacts.IMAGE_PATH, "");
 
-        person3.put(DatabaseTables.Contacts.USER_ID, "tm");
+        person3.put(DatabaseTables.Contacts.USER_ID, 3);
         person3.put(DatabaseTables.Contacts.FIRST_NAME, "Tereza");
         person3.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
         person3.put(DatabaseTables.Contacts.IMAGE_PATH, "");
 
-        person4.put(DatabaseTables.Contacts.USER_ID, "zm");
+        person4.put(DatabaseTables.Contacts.USER_ID, 4);
         person4.put(DatabaseTables.Contacts.FIRST_NAME, "Zvonimir");
         person4.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
         person4.put(DatabaseTables.Contacts.IMAGE_PATH, "");

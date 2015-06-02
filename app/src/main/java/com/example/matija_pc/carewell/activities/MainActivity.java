@@ -29,7 +29,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public static final String IMAGE_PATH = "com.example.matija_pc.carewell.IMAGE_PATH";
     public static final int DELETE = 10;
     public static final int UPDATE = 11;
-    public static final int IMAGE_CHANGED = 12;
 
     private ViewPager pager;
     private TabsPagerAdapter mAdapter;
@@ -68,7 +67,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         actionBar.addTab(contactsTab);
         actionBar.addTab(callsTab);
-        actionBar.addTab(conversationsTab);
+        //actionBar.addTab(conversationsTab);
 
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

@@ -1,6 +1,7 @@
 package com.example.matija_pc.carewell.fragments;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,12 +24,31 @@ import android.widget.Toast;
 
 import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.adapters.ContactsAdapter;
+import com.example.matija_pc.carewell.adapters.ContactsHolderClass;
 import com.example.matija_pc.carewell.database.DatabaseHelper;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Matija-PC on 11.4.2015..
@@ -214,9 +235,154 @@ public class ContactsFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.add_new_contact:
                 //add code
-
+                new GetContactsFromServer().execute("http://www.omdbapi.com/?t=Batman+begins&y=2005&plot=short&r=json");
+                //new GetContactsFromServer().execute("http://10.129.44.123:8080/patient/1/data");
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    class GetContactsFromServer extends AsyncTask<String, String, Void> {
+        private ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        InputStream inputStream = null;
+        String result = "";
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog.setMessage("Downloading contacts...");
+            progressDialog.show();
+            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    GetContactsFromServer.this.cancel(true);
+                }
+            });
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            String url = params[0];
+            List<NameValuePair> param = new ArrayList<>();
+
+            try {
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet();
+                httpGet.setURI(URI.create(url));
+                HttpResponse httpResponse = httpClient.execute(httpGet);
+                HttpEntity httpEntity = httpResponse.getEntity();
+
+                /*HttpPost httpPost = new HttpPost("http://www.omdbapi.com/");
+                List<NameValuePair> nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new BasicNameValuePair("t", "batman begins"));
+                nameValuePairs.add(new BasicNameValuePair("y", "2005"));
+                nameValuePairs.add(new BasicNameValuePair("plot", "short"));
+                nameValuePairs.add(new BasicNameValuePair("r", "json"));
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+                HttpResponse httpResponse = httpClient.execute(httpPost);
+                HttpEntity httpEntity = httpResponse.getEntity();*/
+
+                inputStream = httpEntity.getContent();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //convert response to string
+            try {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"), 8);
+                StringBuilder stringBuilder = new StringBuilder();
+                String line = null;
+                while((line = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(line + "\n");
+                }
+                inputStream.close();
+                result = stringBuilder.toString();
+                Log.i("MainActivity", result);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            try {
+                //if result is json array
+                if (result.charAt(0) != '[') {
+                    result = "[" + result + "]";
+                }
+
+                JSONArray jsonArray = new JSONArray(result);
+                JSONObject[] listOfJsonObjects = new JSONObject[jsonArray.length()];
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    listOfJsonObjects[i] = jsonArray.getJSONObject(i);
+                }
+                new AddContactsToDatabase().execute(listOfJsonObjects);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+            }
+            progressDialog.dismiss();
+        }
+    }
+
+
+
+    class AddContactsToDatabase extends AsyncTask<JSONObject, Void, Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+            for (JSONObject jsonObject : params) {
+                try {
+                    String title =  jsonObject.getString("Title");
+                    String year = jsonObject.getString("Year");
+                    Log.i("Title", title);
+                    Log.i("Year", year);
+                    ContactsHolderClass.ContactsHolder contact = new ContactsHolderClass.ContactsHolder();
+                    contact.firstName = "";
+                    contact.userID = year;
+                    contact.lastName = "";
+                    contact.imagePath = "";
+                    addContact(contact);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            adapter.notifyDataSetChanged();
+            if (CallsFragment.callsAdapter != null)
+                CallsFragment.callsAdapter.notifyDataSetChanged();
+            if (ConversationsFragment.adapter != null)
+                ConversationsFragment.adapter.notifyDataSetChanged();
+        }
+    }
+
+    public void addContact(ContactsHolderClass.ContactsHolder contact) {
+        //add new contact to database
+        DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseTables.Contacts.USER_ID, contact.userID);
+        contentValues.put(DatabaseTables.Contacts.FIRST_NAME, contact.firstName);
+        contentValues.put(DatabaseTables.Contacts.LAST_NAME, contact.lastName);
+        contentValues.put(DatabaseTables.Contacts.IMAGE_PATH, "");
+        long id = databaseOperations.insert(DatabaseTables.Contacts.TABLE_NAME, contentValues);
+        if (id == -1) return; //error occurred
+        //add new contact to adapter
+        HashMap<String, String> newContact = new HashMap<>();
+        newContact.put(DatabaseTables.Contacts._ID, String.valueOf(id));
+        newContact.put(DatabaseTables.Contacts.USER_ID, contact.userID);
+        newContact.put(DatabaseTables.Contacts.FIRST_NAME, contact.firstName);
+        newContact.put(DatabaseTables.Contacts.LAST_NAME, contact.lastName);
+        newContact.put(DatabaseTables.Contacts.IMAGE_PATH, "");
+        contacts.add(newContact);
     }
 }

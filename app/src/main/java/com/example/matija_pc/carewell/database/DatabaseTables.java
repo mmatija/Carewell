@@ -45,7 +45,7 @@ public final class DatabaseTables {
     public static final String CREATE_TABLE_CONTACTS =
             "CREATE TABLE " + Contacts.TABLE_NAME + " ( " +
             Contacts._ID + " INTEGER PRIMARY KEY, " +
-            Contacts.USER_ID + " TEXT UNIQUE, " +
+            Contacts.USER_ID + " INTEGER UNIQUE, " +
             Contacts.FIRST_NAME + " TEXT, " +
             Contacts.LAST_NAME + " TEXT, " +
             Contacts.IMAGE_PATH + " TEXT " + ")";

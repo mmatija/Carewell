@@ -20,8 +20,8 @@ public class DatabaseOperations {
         readDatabase = helper.getReadableDatabase();
     }
 
-    public void insert (String tableName, ContentValues contentValues){
-        writeDatabase.insert(tableName, null, contentValues);
+    public long insert (String tableName, ContentValues contentValues){
+        return writeDatabase.insert(tableName, null, contentValues);
     }
 
     public void delete (String tableName, String where, String... args) {

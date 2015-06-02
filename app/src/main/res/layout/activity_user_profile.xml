@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/video_call_icon"
             android:layout_alignParentRight="true"
-            android:id="@id/video_call_button"
+            android:id="@+id/video_call_button"
             />
 
         <TextView
@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/audio_call_icon"
-            android:id="@id/audio_call_button"
+            android:id="@+id/audio_call_button"
             android:layout_alignParentRight="true"/>
 
         <TextView

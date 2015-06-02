@@ -2,14 +2,10 @@ package com.example.matija_pc.carewell.listeners;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.view.View;
 
-import com.example.matija_pc.carewell.activities.ComposeMessageActivity;
+import com.example.matija_pc.carewell.activities.DisplayMessagesActivity;
 import com.example.matija_pc.carewell.activities.MainActivity;
-import com.example.matija_pc.carewell.activities.MessagesActivity;
-import com.example.matija_pc.carewell.database.DatabaseOperations;
-import com.example.matija_pc.carewell.database.DatabaseTables;
 
 /**
  * Created by Matija-PC on 13.4.2015..
@@ -26,7 +22,12 @@ public class SendMessageButtonListener implements View.OnClickListener {
     public void onClick(View v) {
         //Toast.makeText(mActivity.getApplicationContext(), "Send message", Toast.LENGTH_SHORT).show();
         String userID = (String) v.getTag();
-        DatabaseOperations databaseOperations = new DatabaseOperations(mActivity.getApplicationContext());
+
+        Intent intent = new Intent(mActivity, DisplayMessagesActivity.class);
+        intent.putExtra(MainActivity.USER_ID, userID);
+        mActivity.startActivity(intent);
+
+        /*DatabaseOperations databaseOperations = new DatabaseOperations(mActivity.getApplicationContext());
         String query = "SELECT * FROM " + DatabaseTables.Conversations.TABLE_NAME + " WHERE " + DatabaseTables.Conversations.USER_ID + "=?";
         //check if conversation with this user already exists;
         //if it does exits, start MessagesActivity, else start ComposeMessageActivity
@@ -41,6 +42,6 @@ public class SendMessageButtonListener implements View.OnClickListener {
             Intent intent = new Intent(mActivity, MessagesActivity.class);
             intent.putExtra(MainActivity.USER_ID, userID);
             mActivity.startActivity(intent);
-        }
+        }*/
     }
 }

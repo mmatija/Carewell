@@ -87,7 +87,10 @@ public class ConversationsAdapter extends BaseAdapter {
         else {
             String firstName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME));
             String lastName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.LAST_NAME));
-            conversationsViewHolder.userInfo.setText(firstName + " " + lastName);
+            if (firstName.equals("") && lastName.equals(""))
+                conversationsViewHolder.userInfo.setText(mConversations.get(position).get(DatabaseTables.Conversations.USER_ID));
+            else
+                conversationsViewHolder.userInfo.setText(firstName + " " + lastName);
         }
 
         result.close();
