@@ -66,7 +66,7 @@ public class ContactsAdapter extends BaseAdapter {
             contactsViewHolder.userInfo = (TextView) v.findViewById(R.id.user_info);
             contactsViewHolder.userImage = (ImageView) v.findViewById(R.id.user_picture_thumbnail);
             contactsViewHolder.videoCallButton = (ImageButton) v.findViewById(R.id.video_call_button);
-            contactsViewHolder.audioCallButton = (ImageButton) v.findViewById(R.id.audio_call_button);
+//            contactsViewHolder.audioCallButton = (ImageButton) v.findViewById(R.id.audio_call_button);
             v.setTag(contactsViewHolder);
         }
         else contactsViewHolder = (ContactsViewHolder) view.getTag();
@@ -127,9 +127,9 @@ public class ContactsAdapter extends BaseAdapter {
         audioCallHelper.callType = "audio";
 
         contactsViewHolder.videoCallButton.setTag(videCallHelper);
-        contactsViewHolder.audioCallButton.setTag(audioCallHelper);
+//        contactsViewHolder.audioCallButton.setTag(audioCallHelper);
         contactsViewHolder.videoCallButton.setOnClickListener(new CallButtonListener(mActivity));
-        contactsViewHolder.audioCallButton.setOnClickListener(new CallButtonListener(mActivity));
+//        contactsViewHolder.audioCallButton.setOnClickListener(new CallButtonListener(mActivity));
         return v;
     }
 
@@ -138,7 +138,7 @@ public class ContactsAdapter extends BaseAdapter {
         public ImageView userImage;
         public TextView userInfo;
         public ImageButton videoCallButton;
-        public ImageButton audioCallButton;
+//        public ImageButton audioCallButton;
     }
 
 }

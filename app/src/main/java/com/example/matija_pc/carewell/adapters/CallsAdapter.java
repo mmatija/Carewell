@@ -77,7 +77,7 @@ public class CallsAdapter extends BaseAdapter {
             callsViewHolder.callDuration = (TextView) v.findViewById(R.id.call_duration);
             callsViewHolder.callTime = (TextView) v.findViewById(R.id.call_time);
             callsViewHolder.videoCallButton = (ImageButton) v.findViewById(R.id.video_call_button);
-            callsViewHolder.audioCallButton = (ImageButton) v.findViewById(R.id.audio_call_button);
+//            callsViewHolder.audioCallButton = (ImageButton) v.findViewById(R.id.audio_call_button);
             v.setTag(callsViewHolder);
         }
         else callsViewHolder = (CallsViewHolder) v.getTag();
@@ -127,12 +127,12 @@ public class CallsAdapter extends BaseAdapter {
             });
 
 
-            callsViewHolder.audioCallButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(mContext, "Cannot call this user", Toast.LENGTH_SHORT).show();
-                }
-            });
+//            callsViewHolder.audioCallButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(mContext, "Cannot call this user", Toast.LENGTH_SHORT).show();
+//                }
+//            });
         }
 
         else {
@@ -163,10 +163,10 @@ public class CallsAdapter extends BaseAdapter {
 
 
             callsViewHolder.videoCallButton.setTag(videoCallHelper);
-            callsViewHolder.audioCallButton.setTag(audioCallHelper);
+//            callsViewHolder.audioCallButton.setTag(audioCallHelper);
 
             callsViewHolder.videoCallButton.setOnClickListener(new CallButtonListener(mActivity));
-            callsViewHolder.audioCallButton.setOnClickListener(new CallButtonListener(mActivity));
+//            callsViewHolder.audioCallButton.setOnClickListener(new CallButtonListener(mActivity));
         }
         //set the name of the person
 
@@ -285,7 +285,7 @@ public class CallsAdapter extends BaseAdapter {
         public TextView callDuration;
         public TextView callTime;
         public ImageButton videoCallButton;
-        public ImageButton audioCallButton;
+//        public ImageButton audioCallButton;
     }
 
 }

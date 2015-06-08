@@ -64,7 +64,8 @@ public class CallsFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
-            Cursor result = databaseOperations.select("SELECT * FROM " + DatabaseTables.CallsLog.TABLE_NAME, null);
+            String query = "SELECT * FROM " + DatabaseTables.CallsLog.TABLE_NAME + " ORDER BY " + DatabaseTables.CallsLog.CALL_START + " DESC";
+            Cursor result = databaseOperations.select(query, null);
             result.moveToFirst();
             while (!result.isAfterLast()) {
                 HashMap<String, String> call = new HashMap<String, String>();

@@ -19,7 +19,8 @@ public class CallActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call_activity);
-        String urlString="https://dams-smreki.herokuapp.com";
+        String roomName = "soba1";
+        String urlString="https://dams-smreki.herokuapp.com/" + roomName;
         Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(urlString));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setPackage("com.android.chrome");

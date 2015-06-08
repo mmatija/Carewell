@@ -14,7 +14,6 @@ import com.example.matija_pc.carewell.fragments.CallsFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 /**
  * Created by Matija-PC on 13.4.2015..
@@ -43,7 +42,6 @@ public class CallButtonListener implements View.OnClickListener {
     public static void addCallToAdapter (long callFinish) {
 
         ContentValues values = new ContentValues();
-        Random r = new Random();
         long callDuration = callFinish - callStart;
         String callDirection = "outgoing";
         if (callDirection.equals("missed")) callDuration = 0;
@@ -76,7 +74,7 @@ public class CallButtonListener implements View.OnClickListener {
         call.put(DatabaseTables.CallsLog.CALL_DURATION, values.getAsString(DatabaseTables.CallsLog.CALL_DURATION));
         call.put(DatabaseTables.CallsLog.CALL_DIRECTION, values.getAsString(DatabaseTables.CallsLog.CALL_DIRECTION));
         call.put(DatabaseTables.CallsLog.CALL_TYPE, values.getAsString(DatabaseTables.CallsLog.CALL_TYPE));
-        CallsFragment.calls.add(call);
+        CallsFragment.calls.add(0,call);
         CallsFragment.callsAdapter.notifyDataSetChanged();
     }
 
