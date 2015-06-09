@@ -14,11 +14,15 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Created by Matija-PC on 8.6.2015..
+ * Parses input stream to list of JSON objects
  */
 public class JsonParser {
+
     public static JSONObject[] parseJson(InputStream inputStream) {
+
         String result = "";
         JSONObject[] listOfJsonObjects = null;
+
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"), 8);
             StringBuilder stringBuilder = new StringBuilder();

@@ -24,7 +24,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.matija_pc.carewell.JsonParser;
+import com.example.matija_pc.carewell.HttpMethods;
 import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.adapters.ContactsAdapter;
 import com.example.matija_pc.carewell.adapters.ContactsHolderClass;
@@ -32,23 +32,12 @@ import com.example.matija_pc.carewell.database.DatabaseHelper;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +55,6 @@ public class ContactsFragment extends Fragment {
     public static ContactsAdapter adapter;
     ListView listView;
     GetContactsFromDatabase getContactsFromDatabase;
-    public static int id;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -238,12 +226,8 @@ public class ContactsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add_new_contact:
-                //add code
-                new GetContactsFromServer().execute("http://www.omdbapi.com/?t=Batman+begins&y=2005&plot=short&r=json");
-                // /id JSON post username:pacijent1, password:sifra1
-                //new GetContactsFromServer().execute("http://10.129.44.123:8080/patient/1/data");
-                //new GetIdFromServer().execute("http://10.129.44.123:8080/id");
-                //new GetContactsFromServer().execute("http://10.129.44.123:8080");
+//                new GetContactsFromServer().execute("http://www.omdbapi.com/?t=batman+begins&y=2005&plot=short&r=json");
+                new GetContactsFromServer().execute("http://10.129.44.123:8080");
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -252,7 +236,6 @@ public class ContactsFragment extends Fragment {
     class GetContactsFromServer extends AsyncTask<String, String, Void> {
         private ProgressDialog progressDialog = new ProgressDialog(getActivity());
         InputStream inputStream = null;
-        String result = "";
         JSONObject[] listOfJsonObjects = null;
 
         @Override
@@ -270,25 +253,12 @@ public class ContactsFragment extends Fragment {
         @Override
         protected Void doInBackground(String... params) {
 
-//            String idUrl = params[0] + "/id";
-//            String contactsUrl = params[0] + "/familymember/10/patients";
-//            id = getIdFromServer(idUrl);
-            String testUrl = params[0];
-
-            try {
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpGet httpGet = new HttpGet();
-//                httpGet.setURI(URI.create(contactsUrl));
-                httpGet.setURI(URI.create(testUrl));
-                HttpResponse httpResponse = httpClient.execute(httpGet);
-                HttpEntity httpEntity = httpResponse.getEntity();
-                inputStream = httpEntity.getContent();
-                listOfJsonObjects = JsonParser.parseJson(inputStream);
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String idUrl = params[0] + "/id";
+            int id = getIdFromServer(idUrl);
+            String contactsUrl = params[0] + "/familymember/" + id + "/patients";
+//            String testUrl = params[0];
+//            listOfJsonObjects = HttpMethods.getMethod(testUrl);
+            listOfJsonObjects = HttpMethods.getMethod(contactsUrl);
             return null;
         }
 
@@ -299,93 +269,81 @@ public class ContactsFragment extends Fragment {
             progressDialog.dismiss();
         }
 
-        public int getIdFromServer(String url) {
-            SharedPreferences preferences = getActivity().getSharedPreferences("com.example.matija_pc.carewell", Context.MODE_PRIVATE);
-            int id = preferences.getInt(USER_ID, -1);
-            if (id != -1) return id;
-
-            try {
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(url);
-                List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair("username", "pacijent2"));
-                nameValuePairs.add(new BasicNameValuePair("password", "sifra2"));
-                //                nameValuePairs.add(new BacicNameValuePair("password", "sifra2"));
-                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                HttpResponse httpResponse = httpClient.execute(httpPost);
-                HttpEntity httpEntity = httpResponse.getEntity();
 
 
-                InputStream inputStream = httpEntity.getContent();
-                JSONObject[] listOfJsonObjects = JsonParser.parseJson(inputStream);
-                id = listOfJsonObjects[0].getInt("id");
-                preferences.edit().putInt(USER_ID, id).apply();
+    public int getIdFromServer(String url) {
+        SharedPreferences preferences = getActivity().getSharedPreferences("com.example.matija_pc.carewell", Context.MODE_PRIVATE);
+        int id = preferences.getInt(USER_ID, -1);
+        if (id != -1) return id;
 
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return id;
+        try {
+            List<NameValuePair> nameValuePairs = new ArrayList<>();
+            nameValuePairs.add(new BasicNameValuePair("username", "pacijent1"));
+            nameValuePairs.add(new BasicNameValuePair("password", "sifra1"));
+            JSONObject[] listOfJsonObjects = HttpMethods.postMethod(url, nameValuePairs);
+            id = listOfJsonObjects[0].getInt("id");
+            preferences.edit().putInt(USER_ID, id).apply();
+            Log.i("CONTACT_ID", String.valueOf(id));
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        return id;
+    }
 
 
-        class AddContactsToDatabase extends AsyncTask<JSONObject, Void, Void> {
+    class AddContactsToDatabase extends AsyncTask<JSONObject, Void, Void> {
 
-            @Override
-            protected Void doInBackground(JSONObject... params) {
-                for (JSONObject jsonObject : params) {
-                    try {
-                        String title = jsonObject.getString("Title");
-                        String year = jsonObject.getString("Year");
-                        Log.i("Title", title);
-                        Log.i("Year", year);
-                        ContactsHolderClass.ContactsHolder contact = new ContactsHolderClass.ContactsHolder();
-                        contact.firstName = "";
-                        contact.userID = year;
-                        contact.lastName = "";
-                        contact.imagePath = "";
-                        addContact(contact);
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+            for (JSONObject jsonObject : params) {
+                try {
+//                    String title = jsonObject.getString("Title");
+//                    String year = jsonObject.getString("Year");
+//                    Log.i("Title", title);
+//                    Log.i("Year", year);
+                    String id = jsonObject.getString("id");
+                    ContactsHolderClass.ContactsHolder contact = new ContactsHolderClass.ContactsHolder();
+                    contact.firstName = "";
+                    contact.userID = id;
+                    contact.lastName = "";
+                    contact.imagePath = "";
+                    addContact(contact);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                return null;
             }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                adapter.notifyDataSetChanged();
-                if (CallsFragment.callsAdapter != null)
-                    CallsFragment.callsAdapter.notifyDataSetChanged();
-                if (ConversationsFragment.adapter != null)
-                    ConversationsFragment.adapter.notifyDataSetChanged();
-            }
+            return null;
         }
 
-        public void addContact(ContactsHolderClass.ContactsHolder contact) {
-            //add new contact to database
-            DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(DatabaseTables.Contacts.USER_ID, contact.userID);
-            contentValues.put(DatabaseTables.Contacts.FIRST_NAME, contact.firstName);
-            contentValues.put(DatabaseTables.Contacts.LAST_NAME, contact.lastName);
-            contentValues.put(DatabaseTables.Contacts.IMAGE_PATH, "");
-            long id = databaseOperations.insert(DatabaseTables.Contacts.TABLE_NAME, contentValues);
-            if (id == -1) return; //error occurred
-            //add new contact to adapter
-            HashMap<String, String> newContact = new HashMap<>();
-            newContact.put(DatabaseTables.Contacts._ID, String.valueOf(id));
-            newContact.put(DatabaseTables.Contacts.USER_ID, contact.userID);
-            newContact.put(DatabaseTables.Contacts.FIRST_NAME, contact.firstName);
-            newContact.put(DatabaseTables.Contacts.LAST_NAME, contact.lastName);
-            newContact.put(DatabaseTables.Contacts.IMAGE_PATH, "");
-            contacts.add(newContact);
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            adapter.notifyDataSetChanged();
+            if (CallsFragment.callsAdapter != null)
+                CallsFragment.callsAdapter.notifyDataSetChanged();
+            if (ConversationsFragment.adapter != null)
+                ConversationsFragment.adapter.notifyDataSetChanged();
         }
+    }
+
+    public void addContact(ContactsHolderClass.ContactsHolder contact) {
+        //add new contact to database
+        DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseTables.Contacts.USER_ID, contact.userID);
+        contentValues.put(DatabaseTables.Contacts.FIRST_NAME, contact.firstName);
+        contentValues.put(DatabaseTables.Contacts.LAST_NAME, contact.lastName);
+        contentValues.put(DatabaseTables.Contacts.IMAGE_PATH, "");
+        long id = databaseOperations.insert(DatabaseTables.Contacts.TABLE_NAME, contentValues);
+        if (id == -1) return; //error occurred
+        //add new contact to adapter
+        HashMap<String, String> newContact = new HashMap<>();
+        newContact.put(DatabaseTables.Contacts._ID, String.valueOf(id));
+        newContact.put(DatabaseTables.Contacts.USER_ID, contact.userID);
+        newContact.put(DatabaseTables.Contacts.FIRST_NAME, contact.firstName);
+        newContact.put(DatabaseTables.Contacts.LAST_NAME, contact.lastName);
+        newContact.put(DatabaseTables.Contacts.IMAGE_PATH, "");
+        contacts.add(newContact);
+    }
     }
 }
