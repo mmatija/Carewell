@@ -53,10 +53,13 @@ public class HttpMethods {
             listOfJsonObjects = JsonParser.parseJson(inputStream);
         } catch (ClientProtocolException e) {
             e.printStackTrace();
+            return null;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
 
         return listOfJsonObjects;
@@ -71,13 +74,16 @@ public class HttpMethods {
             HttpGet httpGet = new HttpGet();
             httpGet.setURI(URI.create(url));
             HttpResponse httpResponse = httpClient.execute(httpGet);
+            if (httpResponse.getStatusLine().getStatusCode() != 200) return null;
             HttpEntity httpEntity = httpResponse.getEntity();
             inputStream = httpEntity.getContent();
             listOfJsonObjects = JsonParser.parseJson(inputStream);
         } catch (ClientProtocolException e) {
             e.printStackTrace();
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
 
         return listOfJsonObjects;

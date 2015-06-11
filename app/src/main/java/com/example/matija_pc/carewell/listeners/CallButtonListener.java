@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.view.View;
 
 import com.example.matija_pc.carewell.activities.CallActivity;
+import com.example.matija_pc.carewell.activities.MainActivity;
 import com.example.matija_pc.carewell.adapters.CallsAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
@@ -36,6 +37,7 @@ public class CallButtonListener implements View.OnClickListener {
         callHelper = (CallHelper) v.getTag();
         callStart = System.currentTimeMillis();
         Intent intent = new Intent(mActivity, CallActivity.class);
+        intent.putExtra(MainActivity.USER_ID, callHelper.userID);
         mActivity.startActivityForResult(intent, CALL_ACTIVITY_CODE);
     }
 

@@ -40,6 +40,7 @@ public class UserProfileActivity extends Activity {
     Intent intent;
     private static final int SELECT_PICTURE = 13;
     String userID;
+    String userName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +61,7 @@ public class UserProfileActivity extends Activity {
 
         //define listeners for buttons and set tags
         userID = intent.getStringExtra(MainActivity.USER_ID);
+        userName = intent.getStringExtra(MainActivity.USER_NAME);
         CallButtonListener.CallHelper videoCallHelper = new CallButtonListener.CallHelper();
         videoCallHelper.userID = userID;
         videoCallHelper.callType = "video";
@@ -189,7 +191,7 @@ public class UserProfileActivity extends Activity {
         String lastName = intent.getStringExtra(MainActivity.LAST_NAME);
         String title=firstName+" "+lastName;
         if (firstName.equals("") && lastName.equals(""))
-            getActionBar().setTitle(userID);
+            getActionBar().setTitle(userName);
         else
             getActionBar().setTitle(title);
         return true;

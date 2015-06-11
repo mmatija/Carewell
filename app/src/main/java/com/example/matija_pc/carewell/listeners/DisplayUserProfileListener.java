@@ -36,6 +36,7 @@ public class DisplayUserProfileListener implements View.OnClickListener {
         intent.putExtra(MainActivity.FIRST_NAME, contactsHolder.firstName);
         intent.putExtra(MainActivity.LAST_NAME, contactsHolder.lastName);
         intent.putExtra(MainActivity.USER_ID, contactsHolder.userID);
+        intent.putExtra(MainActivity.USER_NAME, contactsHolder.userName);
         intent.putExtra(MainActivity.IMAGE_PATH, contactsHolder.imagePath);
         activity.startActivityForResult(intent, 1);
     }

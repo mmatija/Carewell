@@ -4,36 +4,62 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebView;
 
+import com.example.matija_pc.carewell.HttpMethods;
 import com.example.matija_pc.carewell.R;
 import com.example.matija_pc.carewell.listeners.CallButtonListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Matija-PC on 18.5.2015..
  */
 public class CallActivity extends Activity {
     WebView webView;
+    // /call/{callerId}/{calleeId}
+    //vraća url;
+    String userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call_activity);
-        String roomName = "soba1";
-        String urlString="https://dams-smreki.herokuapp.com/" + roomName;
-        Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(urlString));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setPackage("com.android.chrome");
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException ex) {
-            // Chrome browser presumably not installed so allow user to choose instead
-            intent.setPackage(null);
-            startActivity(intent);
-        }
+        userId = getIntent().getStringExtra(MainActivity.USER_ID);
+        new StartCall().execute();
     }
 
+    private class StartCall extends AsyncTask<String, Void, Void> {
 
+        @Override
+        protected Void doInBackground(String... params) {
+            JSONObject[] jsonObjects = HttpMethods.getMethod(MainActivity.SERVER_URL + "/call/" + MainActivity.id + "/" + userId);
+            Intent intent = null;
+            try {
+                String url = jsonObjects[0].getString("url");
+                Log.i("CallActivity", url);
+                intent=new Intent(Intent.ACTION_VIEW,Uri.parse(url));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setPackage("com.android.chrome");
+                startActivity(intent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }catch (ActivityNotFoundException ex) {
+                // Chrome browser presumably not installed so allow user to choose instead
+                intent.setPackage(null);
+                startActivity(intent);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+    }
 
 
     @Override

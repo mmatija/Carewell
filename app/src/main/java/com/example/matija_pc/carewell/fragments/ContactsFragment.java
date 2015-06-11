@@ -3,15 +3,12 @@ package com.example.matija_pc.carewell.fragments;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,21 +23,18 @@ import android.widget.Toast;
 
 import com.example.matija_pc.carewell.HttpMethods;
 import com.example.matija_pc.carewell.R;
+import com.example.matija_pc.carewell.activities.MainActivity;
 import com.example.matija_pc.carewell.adapters.ContactsAdapter;
 import com.example.matija_pc.carewell.adapters.ContactsHolderClass;
 import com.example.matija_pc.carewell.database.DatabaseHelper;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Matija-PC on 11.4.2015..
@@ -97,6 +91,7 @@ public class ContactsFragment extends Fragment {
                 HashMap<String, String> contact = new HashMap<String, String>();
                 contact.put(DatabaseTables.Contacts._ID, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts._ID)));
                 contact.put(DatabaseTables.Contacts.USER_ID, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.USER_ID)));
+                contact.put(DatabaseTables.Contacts.USER_NAME, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.USER_NAME)));
                 contact.put(DatabaseTables.Contacts.FIRST_NAME, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME)));
                 contact.put(DatabaseTables.Contacts.LAST_NAME, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.LAST_NAME)));
                 contact.put(DatabaseTables.Contacts.IMAGE_PATH, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.IMAGE_PATH)));
@@ -227,15 +222,15 @@ public class ContactsFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.add_new_contact:
 //                new GetContactsFromServer().execute("http://www.omdbapi.com/?t=batman+begins&y=2005&plot=short&r=json");
-                new GetContactsFromServer().execute("http://10.129.44.123:8080");
+                new GetContactsFromServer().execute();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    class GetContactsFromServer extends AsyncTask<String, String, Void> {
+
+    class GetContactsFromServer extends AsyncTask<Void, Void, Void> {
         private ProgressDialog progressDialog = new ProgressDialog(getActivity());
-        InputStream inputStream = null;
         JSONObject[] listOfJsonObjects = null;
 
         @Override
@@ -251,44 +246,27 @@ public class ContactsFragment extends Fragment {
         }
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected Void doInBackground(Void... params) {
 
-            String idUrl = params[0] + "/id";
-            int id = getIdFromServer(idUrl);
-            String contactsUrl = params[0] + "/familymember/" + id + "/patients";
+
+            String contactsUrl = MainActivity.SERVER_URL + "/user/" + MainActivity.id + "/contacts";
+            listOfJsonObjects = HttpMethods.getMethod(contactsUrl);
 //            String testUrl = params[0];
 //            listOfJsonObjects = HttpMethods.getMethod(testUrl);
-            listOfJsonObjects = HttpMethods.getMethod(contactsUrl);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (listOfJsonObjects == null) return;
+            if (listOfJsonObjects == null) {
+                progressDialog.dismiss();
+                return;
+            }
             new AddContactsToDatabase().execute(listOfJsonObjects);
             progressDialog.dismiss();
         }
 
 
-
-    public int getIdFromServer(String url) {
-        SharedPreferences preferences = getActivity().getSharedPreferences("com.example.matija_pc.carewell", Context.MODE_PRIVATE);
-        int id = preferences.getInt(USER_ID, -1);
-        if (id != -1) return id;
-
-        try {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("username", "pacijent1"));
-            nameValuePairs.add(new BasicNameValuePair("password", "sifra1"));
-            JSONObject[] listOfJsonObjects = HttpMethods.postMethod(url, nameValuePairs);
-            id = listOfJsonObjects[0].getInt("id");
-            preferences.edit().putInt(USER_ID, id).apply();
-            Log.i("CONTACT_ID", String.valueOf(id));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return id;
-    }
 
 
     class AddContactsToDatabase extends AsyncTask<JSONObject, Void, Void> {
@@ -302,9 +280,11 @@ public class ContactsFragment extends Fragment {
 //                    Log.i("Title", title);
 //                    Log.i("Year", year);
                     String id = jsonObject.getString("id");
+                    String username = jsonObject.getString("username");
                     ContactsHolderClass.ContactsHolder contact = new ContactsHolderClass.ContactsHolder();
                     contact.firstName = "";
                     contact.userID = id;
+                    contact.userName = username;
                     contact.lastName = "";
                     contact.imagePath = "";
                     addContact(contact);
@@ -331,6 +311,7 @@ public class ContactsFragment extends Fragment {
         DatabaseOperations databaseOperations = new DatabaseOperations(getActivity().getApplicationContext());
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseTables.Contacts.USER_ID, contact.userID);
+        contentValues.put(DatabaseTables.Contacts.USER_NAME, contact.userName);
         contentValues.put(DatabaseTables.Contacts.FIRST_NAME, contact.firstName);
         contentValues.put(DatabaseTables.Contacts.LAST_NAME, contact.lastName);
         contentValues.put(DatabaseTables.Contacts.IMAGE_PATH, "");

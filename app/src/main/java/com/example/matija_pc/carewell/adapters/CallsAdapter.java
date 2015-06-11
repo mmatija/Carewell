@@ -138,13 +138,24 @@ public class CallsAdapter extends BaseAdapter {
         else {
             String firstName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME));
             String lastName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.LAST_NAME));
-            callsViewHolder.userInfo.setText(firstName + " " + lastName);
+            if (firstName.equals("") && lastName.equals("")) {
+                String query = "SELECT " + DatabaseTables.Contacts.USER_NAME + " FROM " + DatabaseTables.Contacts.TABLE_NAME +
+                                " WHERE " + DatabaseTables.Contacts.USER_ID + "=?";
+                Cursor cursor = databaseOperations.select(query, callsHolder.personCalled);
+                cursor.moveToFirst();
+                String userName = cursor.getString(0);
+                callsViewHolder.userInfo.setText(userName);
+                cursor.close();
+            }
+            else
+                callsViewHolder.userInfo.setText(firstName + " " + lastName);
 
             ContactsHolderClass.ContactsHolder contactsHolder = new ContactsHolderClass.ContactsHolder();
             contactsHolder.firstName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME));
             contactsHolder.lastName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.LAST_NAME));
             contactsHolder.imagePath = result.getString(result.getColumnIndex(DatabaseTables.Contacts.IMAGE_PATH));
             contactsHolder.userID = result.getString(result.getColumnIndex(DatabaseTables.Contacts.USER_ID));
+            contactsHolder.userName = result.getColumnName(result.getColumnIndex(DatabaseTables.Contacts.USER_NAME));
 
 
             /*callsViewHolder.relativeLayout.setTag(contactsHolder);

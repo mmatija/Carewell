@@ -77,6 +77,7 @@ public class ContactsAdapter extends BaseAdapter {
         contactsHolder.firstName = mContacts.get(position).get(DatabaseTables.Contacts.FIRST_NAME);
         contactsHolder.lastName = mContacts.get(position).get(DatabaseTables.Contacts.LAST_NAME);
         contactsHolder.imagePath = mContacts.get(position).get(DatabaseTables.Contacts.IMAGE_PATH);
+        contactsHolder.userName = mContacts.get(position).get(DatabaseTables.Contacts.USER_NAME);
 
 
         contactsViewHolder.relativeLayout.setLongClickable(true);
@@ -84,7 +85,7 @@ public class ContactsAdapter extends BaseAdapter {
         contactsViewHolder.relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));
 
         if (contactsHolder.firstName.equals("") && contactsHolder.lastName.equals(""))
-            contactsViewHolder.userInfo.setText(contactsHolder.userID);
+            contactsViewHolder.userInfo.setText(contactsHolder.userName);
         else
             contactsViewHolder.userInfo.setText(contactsHolder.firstName + " " + contactsHolder.lastName);
         contactsViewHolder.userInfo.setTag(contactsHolder);

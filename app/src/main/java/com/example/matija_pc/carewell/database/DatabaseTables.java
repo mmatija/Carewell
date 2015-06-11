@@ -11,6 +11,7 @@ public final class DatabaseTables {
     public static abstract class Contacts implements BaseColumns{
         public static final String TABLE_NAME = "Contacts";
         public static final String USER_ID = "id";
+        public static final String USER_NAME = "userName";
         public static final String FIRST_NAME = "firstName";
         public static final String LAST_NAME = "lastName";
         public static final String IMAGE_PATH = "imagePath";    //path to image location
@@ -46,6 +47,7 @@ public final class DatabaseTables {
             "CREATE TABLE " + Contacts.TABLE_NAME + " ( " +
             Contacts._ID + " INTEGER PRIMARY KEY, " +
             Contacts.USER_ID + " INTEGER UNIQUE, " +
+            Contacts.USER_NAME + " TEXT NOT NULL, " +
             Contacts.FIRST_NAME + " TEXT, " +
             Contacts.LAST_NAME + " TEXT, " +
             Contacts.IMAGE_PATH + " TEXT " + ")";
