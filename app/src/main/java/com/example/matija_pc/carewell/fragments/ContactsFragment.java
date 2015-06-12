@@ -324,6 +324,7 @@ public class ContactsFragment extends Fragment {
         newContact.put(DatabaseTables.Contacts.FIRST_NAME, contact.firstName);
         newContact.put(DatabaseTables.Contacts.LAST_NAME, contact.lastName);
         newContact.put(DatabaseTables.Contacts.IMAGE_PATH, "");
+        newContact.put(DatabaseTables.Contacts.USER_NAME, contact.userName);
         contacts.add(newContact);
     }
     }

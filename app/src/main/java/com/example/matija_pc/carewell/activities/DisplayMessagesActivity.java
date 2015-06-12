@@ -18,7 +18,7 @@ import org.json.JSONObject;
  */
 public class DisplayMessagesActivity extends Activity{
 
-    private static final String MESSAGES_URL = MainActivity.SERVER_URL +"/message";
+    private static final String MESSAGES_URL = MainActivity.SERVER_URL +"/messageMobile";
     private String userId;
     WebView webView;
     // /message/{doctorId}/{patientId}
@@ -36,8 +36,8 @@ public class DisplayMessagesActivity extends Activity{
                 return true;
             }
         });
-
-        new GetMessagesFromServer().execute();
+        webView.loadUrl(MESSAGES_URL + "/" + MainActivity.id + "/" + userId);
+//        new GetMessagesFromServer().execute();
     }
 
     private class GetMessagesFromServer extends AsyncTask<Void, Void, String> {

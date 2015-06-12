@@ -29,14 +29,27 @@ public class CallActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call_activity);
         userId = getIntent().getStringExtra(MainActivity.USER_ID);
-        new StartCall().execute();
+        Intent intent = getIntent();
+        try {
+            intent=new Intent(Intent.ACTION_VIEW,Uri.parse(MainActivity.SERVER_URL + "/callMobile/" + MainActivity.id + "/" + userId));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setPackage("com.android.chrome");
+            startActivity(intent);
+        }catch (ActivityNotFoundException ex) {
+            // Chrome browser presumably not installed so allow user to choose instead
+            intent.setPackage(null);
+            startActivity(intent);
+        }
+        //new StartCall().execute();
     }
 
     private class StartCall extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {
-            JSONObject[] jsonObjects = HttpMethods.getMethod(MainActivity.SERVER_URL + "/call/" + MainActivity.id + "/" + userId);
+            Log.i("CALL_MOBILE", MainActivity.SERVER_URL + "/callMobile/" + MainActivity.id + "/" + userId);
+
+            JSONObject[] jsonObjects = HttpMethods.getMethod(MainActivity.SERVER_URL + "/callMobile/" + MainActivity.id + "/" + userId);
             Intent intent = null;
             try {
                 String url = jsonObjects[0].getString("url");
@@ -47,10 +60,6 @@ public class CallActivity extends Activity {
                 startActivity(intent);
             } catch (JSONException e) {
                 e.printStackTrace();
-            }catch (ActivityNotFoundException ex) {
-                // Chrome browser presumably not installed so allow user to choose instead
-                intent.setPackage(null);
-                startActivity(intent);
             }
             return null;
         }
