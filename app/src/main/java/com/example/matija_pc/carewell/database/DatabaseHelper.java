@@ -22,18 +22,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DatabaseTables.CREATE_TABLE_CONTACTS);
         db.execSQL(DatabaseTables.CREATE_TABLE_CALLS_LOG);
-        db.execSQL(DatabaseTables.CREATE_TABLE_MESSAGES);
-        db.execSQL(DatabaseTables.CREATE_TABLE_CONVERSATIONS);
-        insertTestData(db);
-
+//        insertTestData(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(DatabaseTables.DELETE_TABLE_CALLS_LOG);
-        db.execSQL(DatabaseTables.DELETE_TABLE_MESSAGES);
         db.execSQL(DatabaseTables.DELETE_TABLE_CONTACTS);
-        db.execSQL(DatabaseTables.DELETE_TABLE_CONVERSATIONS);
+        db.execSQL(DatabaseTables.DELETE_TABLE_CALLS_LOG);
         onCreate(db);
     }
 
@@ -48,8 +43,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         person1.put(DatabaseTables.Contacts.USER_NAME, "mm");
         person1.put(DatabaseTables.Contacts.FIRST_NAME, "Matija");
         person1.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
-//        person1.put(DatabaseTables.Contacts.FIRST_NAME, "");
-//        person1.put(DatabaseTables.Contacts.LAST_NAME, "");
         person1.put(DatabaseTables.Contacts.IMAGE_PATH, "");
 
 
@@ -57,24 +50,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         person2.put(DatabaseTables.Contacts.USER_NAME, "jm");
         person2.put(DatabaseTables.Contacts.FIRST_NAME, "Juraj");
         person2.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
-//        person2.put(DatabaseTables.Contacts.FIRST_NAME, "");
-//        person2.put(DatabaseTables.Contacts.LAST_NAME, "");
         person2.put(DatabaseTables.Contacts.IMAGE_PATH, "");
 
         person3.put(DatabaseTables.Contacts.USER_ID, 3);
         person3.put(DatabaseTables.Contacts.USER_NAME, "tm");
         person3.put(DatabaseTables.Contacts.FIRST_NAME, "Tereza");
         person3.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
-//        person3.put(DatabaseTables.Contacts.FIRST_NAME, "");
-//        person3.put(DatabaseTables.Contacts.LAST_NAME, "");
         person3.put(DatabaseTables.Contacts.IMAGE_PATH, "");
 
         person4.put(DatabaseTables.Contacts.USER_ID, 4);
         person4.put(DatabaseTables.Contacts.USER_NAME, "zm");
         person4.put(DatabaseTables.Contacts.FIRST_NAME, "Zvonimir");
         person4.put(DatabaseTables.Contacts.LAST_NAME, "Močilac");
-//        person4.put(DatabaseTables.Contacts.FIRST_NAME, "");
-//        person4.put(DatabaseTables.Contacts.LAST_NAME, "");
         person4.put(DatabaseTables.Contacts.IMAGE_PATH, "");
 
         db.insert(DatabaseTables.Contacts.TABLE_NAME, null, person1);

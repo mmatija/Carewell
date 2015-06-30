@@ -32,7 +32,6 @@ public class DisplayUserProfileListener implements View.OnClickListener {
         Cursor result = databaseOperations.select(query, contactsHolder.userID);
         if (result.getCount()<=0)
             return;
-        //TextView textView = (TextView) v.getTag();
         intent.putExtra(MainActivity.FIRST_NAME, contactsHolder.firstName);
         intent.putExtra(MainActivity.LAST_NAME, contactsHolder.lastName);
         intent.putExtra(MainActivity.USER_ID, contactsHolder.userID);

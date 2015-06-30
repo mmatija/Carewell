@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 /**
  * Created by Matija-PC on 5.4.2015..
+ * Provides easier database access
  */
 public class DatabaseOperations {
 

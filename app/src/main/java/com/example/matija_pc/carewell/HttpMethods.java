@@ -19,6 +19,7 @@ import java.util.List;
 
 /**
  * Created by Matija-PC on 9.6.2015..
+ * Performs HTTP GET and HTTP POST methods
  */
 public class HttpMethods {
 

@@ -20,13 +20,8 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         switch (i) {
             case 0:
                 return new ContactsFragment();
-
             case 1:
                 return new CallsFragment();
-
-            /*case 2:
-                return new ConversationsFragment();*/
-
             default:
                 return null;
 

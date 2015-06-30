@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.webkit.WebView;
 
 import com.example.matija_pc.carewell.R;
 
@@ -16,7 +15,6 @@ public class DisplayMessagesActivity extends Activity{
 
     private static final String MESSAGES_URL = MainActivity.SERVER_URL +"/messageMobile";
     private String userId;
-    WebView webView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

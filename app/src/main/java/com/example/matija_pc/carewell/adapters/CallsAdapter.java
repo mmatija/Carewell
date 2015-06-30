@@ -34,9 +34,6 @@ public class CallsAdapter extends BaseAdapter {
     Context mContext;
     Activity mActivity;
     public static ArrayList<UserImageLoader> distinctContacts;
-    String selectDistinct = "SELECT DISTINCT " + DatabaseTables.CallsLog.PERSON_CALLED +
-            " FROM " + DatabaseTables.CallsLog.TABLE_NAME;
-
 
     public CallsAdapter (Activity activity, ArrayList<HashMap<String, String>> calls) {
         mContext = activity.getApplicationContext();
@@ -77,7 +74,6 @@ public class CallsAdapter extends BaseAdapter {
             callsViewHolder.callDuration = (TextView) v.findViewById(R.id.call_duration);
             callsViewHolder.callTime = (TextView) v.findViewById(R.id.call_time);
             callsViewHolder.videoCallButton = (ImageButton) v.findViewById(R.id.video_call_button);
-//            callsViewHolder.audioCallButton = (ImageButton) v.findViewById(R.id.audio_call_button);
             v.setTag(callsViewHolder);
         }
         else callsViewHolder = (CallsViewHolder) v.getTag();
@@ -100,7 +96,6 @@ public class CallsAdapter extends BaseAdapter {
 
         RelativeLayout relativeLayout = (RelativeLayout) v.findViewById(R.id.call_log_relative_layout);
         relativeLayout.setLongClickable(true);
-        //callsViewHolder.relativeLayout.setLongClickable(true);
 
         //if there are no rows, i.e. user is deleted
         if(!result.moveToFirst()) {
@@ -126,40 +121,29 @@ public class CallsAdapter extends BaseAdapter {
                 }
             });
 
-
-//            callsViewHolder.audioCallButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(mContext, "Cannot call this user", Toast.LENGTH_SHORT).show();
-//                }
-//            });
         }
 
         else {
             String firstName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME));
             String lastName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.LAST_NAME));
+            ContactsHolderClass.ContactsHolder contactsHolder = new ContactsHolderClass.ContactsHolder();
             if (firstName.equals("") && lastName.equals("")) {
                 String query = "SELECT " + DatabaseTables.Contacts.USER_NAME + " FROM " + DatabaseTables.Contacts.TABLE_NAME +
                                 " WHERE " + DatabaseTables.Contacts.USER_ID + "=?";
                 Cursor cursor = databaseOperations.select(query, callsHolder.personCalled);
                 cursor.moveToFirst();
                 String userName = cursor.getString(0);
+                contactsHolder.userName = userName;
                 callsViewHolder.userInfo.setText(userName);
                 cursor.close();
             }
             else
                 callsViewHolder.userInfo.setText(firstName + " " + lastName);
 
-            ContactsHolderClass.ContactsHolder contactsHolder = new ContactsHolderClass.ContactsHolder();
             contactsHolder.firstName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.FIRST_NAME));
             contactsHolder.lastName = result.getString(result.getColumnIndex(DatabaseTables.Contacts.LAST_NAME));
             contactsHolder.imagePath = result.getString(result.getColumnIndex(DatabaseTables.Contacts.IMAGE_PATH));
             contactsHolder.userID = result.getString(result.getColumnIndex(DatabaseTables.Contacts.USER_ID));
-            contactsHolder.userName = result.getColumnName(result.getColumnIndex(DatabaseTables.Contacts.USER_NAME));
-
-
-            /*callsViewHolder.relativeLayout.setTag(contactsHolder);
-            callsViewHolder.relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));*/
 
             relativeLayout.setTag(contactsHolder);
             relativeLayout.setOnClickListener(new DisplayUserProfileListener(mActivity));
@@ -174,13 +158,10 @@ public class CallsAdapter extends BaseAdapter {
 
 
             callsViewHolder.videoCallButton.setTag(videoCallHelper);
-//            callsViewHolder.audioCallButton.setTag(audioCallHelper);
-
             callsViewHolder.videoCallButton.setOnClickListener(new CallButtonListener(mActivity));
-//            callsViewHolder.audioCallButton.setOnClickListener(new CallButtonListener(mActivity));
         }
-        //set the name of the person
 
+        //set the name of the person
         SimpleDateFormat dateFormat = new SimpleDateFormat();
         Date tempStartDate = new Date(Long.parseLong(callsHolder.callStart));
         Date tempDuration = new Date(Long.parseLong(callsHolder.callDuration));
@@ -283,8 +264,6 @@ public class CallsAdapter extends BaseAdapter {
     private void setCallType (ImageView iv, String callType) {
         if (callType.equals("video"))
             iv.setImageResource(R.drawable.video_call_icon);
-        else
-            iv.setImageResource(R.drawable.audio_call_icon);
     }
 
     //view holder class so that findViewById gets call only once for each view
@@ -296,7 +275,6 @@ public class CallsAdapter extends BaseAdapter {
         public TextView callDuration;
         public TextView callTime;
         public ImageButton videoCallButton;
-//        public ImageButton audioCallButton;
     }
 
 }

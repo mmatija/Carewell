@@ -1,6 +1,5 @@
 package com.example.matija_pc.carewell;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -18,7 +17,6 @@ public class LoadUserImages extends AsyncTask<Void, Integer, Void> {
 
     ArrayList<UserImageLoader> mUserImages;
     Context mContext;
-    ProgressDialog progressDialog;
 
     public LoadUserImages(ArrayList<UserImageLoader> userImages, Context context) {
         mUserImages = userImages;

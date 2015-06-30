@@ -44,7 +44,7 @@
             android:textSize="20sp"
             android:paddingLeft="5dp"
             android:paddingTop="30dp"
-            android:text="Placeholder name"/>
+            android:text="Ime i prezime"/>
 
         <LinearLayout
             android:id="@+id/linear_layout_1"

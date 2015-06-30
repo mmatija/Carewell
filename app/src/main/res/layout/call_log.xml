@@ -29,7 +29,7 @@
             android:paddingLeft="5dp"
             android:paddingTop="5dp"
             android:textSize="17dp"
-            android:text="Placeholder name"
+            android:text="Ime i prezime"
             android:textColor="@android:color/black"
             />
 
@@ -43,7 +43,7 @@
             android:gravity="bottom|left"
             android:paddingLeft="5dp"
             android:textSize="15dp"
-            android:text="@string/duration"/>
+            android:text="Trajanje:"/>
 
         <ImageView
             android:layout_width="40dp"
@@ -73,7 +73,7 @@
             android:paddingLeft="5dp"
             android:paddingBottom="2dp"
             android:textSize="15dp"
-            />
+            android:text="Vrijeme poziva:" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -94,14 +94,6 @@
                 android:src="@drawable/video_call_icon"
                 android:background="@drawable/call_button"
             />
-
-            <!--<ImageButton
-                android:layout_width="45dp"
-                android:layout_height="40dp"
-                android:id="@+id/audio_call_button"
-                android:src="@drawable/audio_call_icon"
-                android:background="@drawable/call_button"
-                android:layout_marginTop="5dp" />-->
             </LinearLayout>
 
 

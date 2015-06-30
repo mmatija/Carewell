@@ -42,9 +42,7 @@ import java.util.HashMap;
 public class ContactsFragment extends Fragment {
 
     private static final int CONTACTS_CONTEXT_MENU_GROUP = 0;
-    public static final String FIRST_NAME = "com.example.matija_pc.carewell.FIRST_NAME";
     public static final String USER_ID = "com.example.matija_pc.carewell.USER_ID";
-    public static final String LAST_NAME = "com.example.matija_pc.carewell.LAST_NAME";
     public static ArrayList<HashMap<String, String>> contacts;
     public static ContactsAdapter adapter;
     ListView listView;
@@ -62,7 +60,6 @@ public class ContactsFragment extends Fragment {
         adapter = new ContactsAdapter(getActivity(), contacts);
         listView.setAdapter(adapter);
         listView.setItemsCanFocus(true);
-        //insertTestData();
         registerForContextMenu(listView);
         getContactsFromDatabase = new GetContactsFromDatabase();
         getContactsFromDatabase.execute();
@@ -76,7 +73,6 @@ public class ContactsFragment extends Fragment {
 
 
     public class GetContactsFromDatabase extends AsyncTask<Void, Void, Void> {
-        ArrayList<HashMap<String, String>> tempContacts = new ArrayList<>();
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -84,7 +80,6 @@ public class ContactsFragment extends Fragment {
             SQLiteDatabase database = helper.getReadableDatabase();
             Cursor cursor = database.rawQuery("select * from " + DatabaseTables.Contacts.TABLE_NAME, null);
             cursor.moveToFirst();
-            //ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
 
             //read all rows
             while (!cursor.isAfterLast()) {
@@ -96,7 +91,6 @@ public class ContactsFragment extends Fragment {
                 contact.put(DatabaseTables.Contacts.LAST_NAME, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.LAST_NAME)));
                 contact.put(DatabaseTables.Contacts.IMAGE_PATH, cursor.getString(cursor.getColumnIndex(DatabaseTables.Contacts.IMAGE_PATH)));
                 contacts.add(contact);
-                //tempContacts.add(contact);
                 cursor.moveToNext();
             }
             cursor.close();
@@ -105,7 +99,6 @@ public class ContactsFragment extends Fragment {
         }
 
         protected void onPostExecute(Void v) {
-            //contacts = tempContacts;
             adapter.notifyDataSetChanged();
         }
     }
@@ -127,7 +120,6 @@ public class ContactsFragment extends Fragment {
     }
 
     public void updateContactInfo(String newFirstName, String newLastName, String userID) {
-
         //write changes to database
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseTables.Contacts.FIRST_NAME, newFirstName);
@@ -150,7 +142,6 @@ public class ContactsFragment extends Fragment {
 
 
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
-        //super.onCreateContextMenu(menu, view, menuInfo);
         menu.add(CONTACTS_CONTEXT_MENU_GROUP, view.getId(), 0, "Edit");
         menu.add(CONTACTS_CONTEXT_MENU_GROUP, view.getId(), 0, "Delete");
     }
@@ -221,7 +212,6 @@ public class ContactsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add_new_contact:
-//                new GetContactsFromServer().execute("http://www.omdbapi.com/?t=batman+begins&y=2005&plot=short&r=json");
                 new GetContactsFromServer().execute();
                 return true;
         }
@@ -251,8 +241,6 @@ public class ContactsFragment extends Fragment {
 
             String contactsUrl = MainActivity.SERVER_URL + "/user/" + MainActivity.id + "/contacts";
             listOfJsonObjects = HttpMethods.getMethod(contactsUrl);
-//            String testUrl = params[0];
-//            listOfJsonObjects = HttpMethods.getMethod(testUrl);
             return null;
         }
 
@@ -275,10 +263,6 @@ public class ContactsFragment extends Fragment {
         protected Void doInBackground(JSONObject... params) {
             for (JSONObject jsonObject : params) {
                 try {
-//                    String title = jsonObject.getString("Title");
-//                    String year = jsonObject.getString("Year");
-//                    Log.i("Title", title);
-//                    Log.i("Year", year);
                     String id = jsonObject.getString("id");
                     String username = jsonObject.getString("username");
                     ContactsHolderClass.ContactsHolder contact = new ContactsHolderClass.ContactsHolder();
@@ -301,8 +285,6 @@ public class ContactsFragment extends Fragment {
             adapter.notifyDataSetChanged();
             if (CallsFragment.callsAdapter != null)
                 CallsFragment.callsAdapter.notifyDataSetChanged();
-            if (ConversationsFragment.adapter != null)
-                ConversationsFragment.adapter.notifyDataSetChanged();
         }
     }
 

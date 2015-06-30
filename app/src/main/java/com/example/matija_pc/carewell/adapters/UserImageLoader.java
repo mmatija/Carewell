@@ -10,6 +10,7 @@ import com.example.matija_pc.carewell.database.DatabaseTables;
 
 /**
  * Created by Matija-PC on 16.4.2015..
+ * Loads user images from internal memory
  */
 public class UserImageLoader {
     public String userID;

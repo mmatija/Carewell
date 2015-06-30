@@ -8,12 +8,10 @@ import android.view.View;
 
 import com.example.matija_pc.carewell.activities.CallActivity;
 import com.example.matija_pc.carewell.activities.MainActivity;
-import com.example.matija_pc.carewell.adapters.CallsAdapter;
 import com.example.matija_pc.carewell.database.DatabaseOperations;
 import com.example.matija_pc.carewell.database.DatabaseTables;
 import com.example.matija_pc.carewell.fragments.CallsFragment;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -22,8 +20,6 @@ import java.util.HashMap;
 public class CallButtonListener implements View.OnClickListener {
     public static Activity mActivity;
     private static int CALL_ACTIVITY_CODE = 100;
-    public CallsAdapter mAdapter;
-    public ArrayList<HashMap<String, String>> mCalls;
     private static CallHelper callHelper;
     private static long callStart;
 
@@ -60,7 +56,6 @@ public class CallButtonListener implements View.OnClickListener {
         databaseOperations.insert(DatabaseTables.CallsLog.TABLE_NAME, values);
 
 
-        //DatabaseOperations databaseOperations = new DatabaseOperations(mActivity);
         String query = "SELECT " + DatabaseTables.CallsLog._ID + " FROM " + DatabaseTables.CallsLog.TABLE_NAME +
                         " WHERE " + DatabaseTables.CallsLog.CALL_DIRECTION + "=?" + " AND " +
                         DatabaseTables.CallsLog.CALL_START + "=?" + " LIMIT 1";

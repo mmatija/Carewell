@@ -30,29 +30,6 @@
                 android:value=".activities.MainActivity" />
         </activity>
 
-        <activity android:name=".activities.SearchableActivity"
-            android:label="@string/title_activity_searchable">
-        </activity>
-
-        <activity android:name=".activities.ComposeMessageActivity"
-            android:label="@string/title_activity_compose_message"
-            android:windowSoftInputMode="adjustResize"
-            android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
-            </intent-filter>
-
-            <meta-data android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
-
-            <meta-data android:name="android.app.default_searchable"
-                android:value=".ComposeMessageActivity"/>
-        </activity>
-
-        <activity android:name=".activities.MessagesActivity"
-            android:label="@string/title_activity_messages"
-            android:windowSoftInputMode="adjustResize"/>
-
         <activity android:name=".activities.CallActivity"
             android:label="@string/title_activity_call" />
 

@@ -50,11 +50,9 @@ public class UserProfileActivity extends Activity {
         RelativeLayout videoCallLayout = (RelativeLayout) findViewById(R.id.video_call_layout);
         ImageButton videoCallButton = (ImageButton) findViewById(R.id.video_call_button);
         RelativeLayout audioCallLayout = (RelativeLayout) findViewById(R.id.audio_call_layout);
-//        ImageButton audioCallButton = (ImageButton) findViewById(R.id.audio_call_button);
         RelativeLayout sendMessageLayout = (RelativeLayout) findViewById(R.id.send_message_layout);
         ImageButton sendMessageButton = (ImageButton) findViewById(R.id.send_message_button);
         ImageView userImage = (ImageView) findViewById(R.id.user_picture);
-        String currentImagePath = intent.getStringExtra(MainActivity.IMAGE_PATH);
 
         //load user image asynchronously
         new LoadSingleImage().execute(userImage);
@@ -72,14 +70,12 @@ public class UserProfileActivity extends Activity {
 
         videoCallButton.setTag(videoCallHelper);
         videoCallLayout.setTag(videoCallHelper);
-//        audioCallButton.setTag(audioCallHelper);
         audioCallLayout.setTag(audioCallHelper);
         sendMessageButton.setTag(userID);
         sendMessageLayout.setTag(userID);
         videoCallLayout.setOnClickListener(new CallButtonListener(this));
         videoCallButton.setOnClickListener(new CallButtonListener(this));
         audioCallLayout.setOnClickListener(new CallButtonListener(this));
-//        audioCallButton.setOnClickListener(new CallButtonListener(this));
         sendMessageLayout.setOnClickListener(new SendMessageButtonListener(this));
         sendMessageButton.setOnClickListener(new SendMessageButtonListener(this));
         userImage.setOnClickListener(changeUserImage);
@@ -186,7 +182,6 @@ public class UserProfileActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_user_profile, menu);
-        //intent = getIntent();
         String firstName = intent.getStringExtra(MainActivity.FIRST_NAME);
         String lastName = intent.getStringExtra(MainActivity.LAST_NAME);
         String title=firstName+" "+lastName;

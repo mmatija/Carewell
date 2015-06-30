@@ -80,7 +80,6 @@ public class CallsFragment extends Fragment {
                 long callDuration = result.getLong(result.getColumnIndex(DatabaseTables.CallsLog.CALL_DURATION));
                 call.put(DatabaseTables.CallsLog.CALL_DURATION, String.valueOf(callDuration));
                 calls.add(call);
-                //tempCalls.add(call);
                 result.moveToNext();
 
             }
@@ -89,13 +88,11 @@ public class CallsFragment extends Fragment {
         }
 
         protected void onPostExecute (Void param) {
-            //calls = tempCalls;
             callsAdapter.notifyDataSetChanged();
         }
     }
 
     public void onCreateContextMenu (ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
-        //super.onCreateContextMenu(menu, view, menuInfo);
         menu.add(CALLS_CONTEXT_MENU_GROUP, view.getId(), 0, "Delete");
         menu.add(CALLS_CONTEXT_MENU_GROUP, view.getId(), 0, "Delete All");
     }
